@@ -1,3 +1,5 @@
+from math import pi
+
 # Import the FSM functions
 from fsm.functions import (
 	createState , createFSM ,
@@ -6,18 +8,44 @@ from fsm.functions import (
 
 # Import primitive robot behaviors
 from api.pubapi import sit, stand , rest, say , shutdown ,\
-    startWalking , stopWalking
+    startWalking , stopWalking , setWalkVelocity
 
 # Define the functions for world model
+
 def detectTouch(wm):
     return readWM(wm, "tactile", "middle")
+
 # Adjusts the walking time of the robot
+
 def entryTime(wm):
     return readWM(wm, "time", "entry")
+
 def currentTime(wm):
     return readWM(wm, "time", "current")
+
 def walkTime(wm):
     if currentTime(wm) - entryTime(wm) >= 10:
+        return True
+    else:
+        return False
+
+## vi ska spara nuvarande position wz i world model med writeWM och jämföra med ny rotation wz.
+## använda states för detta? annars funktioner
+
+def start_position(wm):
+    return readWM(wm, "odometry", "")
+
+def current_position(wm):
+    return readWM(wm, "odometry", "wz")
+
+def rotate(wm):
+    if start_position(wm) + current_position(wm) >= start_position(wm) + 0.25:
+        return True
+    else:
+        return False
+
+def uTurn(wm):
+    if start_position(wm) + current_position(wm) >= start_position(wm) + 0.5:
         return True
     else:
         return False
@@ -29,14 +57,18 @@ standState = createState("standState", stand)
 restState = createState("restState", rest)
 walkState = createState("walkState", startWalking)
 stopWalkState = createState("stopWalkState", stopWalking)
+rotate90State = createState("rotate90State", lambda : setWalkVelocity(0, 0, 1))
+uTurnState = createState("uTurnState", lambda : setWalkVelocity(1, 0, 1))
 shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
 
 # Create states for talking
 
-sayLetsWalkState = createState("sayLetsWalkState", lambda : say("Let us promenade!"))
+sayLetsWalkState = createState("sayLetsWalkState", lambda : say("Let us waaalk!"))
 sayRotateState = createState("sayRotateState", lambda : say("Let us spinn!"))
+sayUTurnState = createState("sayUTurnState", lambda : say("Let us walk in an arch!"))
 sayGoodbyeState = createState("sayGoodbyeState", lambda : say("Goodbye World!"))
+
  
 # Create states for waiting for touch
 
@@ -48,6 +80,11 @@ addTransition(waitSittingState , detectTouch , standState)
 addTransition(standState , lambda wm: True , sayLetsWalkState)
 addTransition(sayLetsWalkState, lambda wm: True , walkState)
 addTransition(walkState , walkTime , stopWalkState)
+addTransition(stopWalkState, lambda wm: True , sayRotateState)
+addTransition(sayRotateState, lambda wm: True , rotate90State)
+addTransition(rotate90State, rotate , sayUTurnState)
+addTransition(sayUTurnState, lambda wm: True , uTurnState)
+addTransition(uTurnState, uTurn , stopWalkState)
 addTransition(stopWalkState, lambda wm: True , sayGoodbyeState)
 addTransition(sayGoodbyeState , lambda wm: True , sitState)
 addTransition(sitState , lambda wm: True , restState)
@@ -57,7 +94,8 @@ addTransition(restState , lambda wm: True , shutdownState)
 myFSM = createFSM("fsm")
 addStates(myFSM , waitSittingState , waitStandingState ,  standState , 
           sayLetsWalkState , sayGoodbyeState , sitState , restState ,
-          shutdownState , walkState , stopWalkState)
+          shutdownState , walkState , stopWalkState, rotate90State , 
+          uTurnState , sayRotateState, sayUTurnState)
 
 # Set the initial state to waitSittingState
 setInitialState(myFSM , waitSittingState)
