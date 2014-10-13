@@ -4,7 +4,7 @@ from math import pi
 from fsm.functions import (
 	createState , createFSM ,
 	addTransition , addStates ,
-	setInitialState, readWM )		# setMainFSM should be there
+	setInitialState, readWM, writeWM, setPrintTransition )		# setMainFSM should be there
 
 # Import primitive robot behaviors
 from api.pubapi import sit, stand , rest, say , shutdown ,\
@@ -29,23 +29,23 @@ def walkTime(wm):
     else:
         return False
 
-## vi ska spara nuvarande position wz i world model med writeWM och jämföra med ny rotation wz.
-## använda states för detta? annars funktioner
-
 def start_position(wm):
-    return readWM(wm, "odometry", "")
+    writeWM(wm, current_position(wm), "start_angle") 
 
 def current_position(wm):
     return readWM(wm, "odometry", "wz")
 
 def rotate(wm):
-    if start_position(wm) + current_position(wm) >= start_position(wm) + 0.25:
+    start_position(wm)
+   # print(readWM(wm, "start_angle"))
+    if readWM(wm, "start_angle") + current_position(wm) >=readWM(wm, "start_angle") + 0.25:
         return True
     else:
         return False
 
 def uTurn(wm):
-    if start_position(wm) + current_position(wm) >= start_position(wm) + 0.5:
+    start_position(wm)
+    if start_angle + current_position(wm) >= start_angle + 0.5:
         return True
     else:
         return False
@@ -76,7 +76,7 @@ waitSittingState = createState("waitSittingState", lambda : None)
 waitStandingState = createState("waitStandingState", lambda : None)
 
 # Add transitions according to the state diagram
-addTransition(waitSittingState , detectTouch , standState)
+#addTransition(waitSittingState , detectTouch , standState)
 addTransition(standState , lambda wm: True , sayLetsWalkState)
 addTransition(sayLetsWalkState, lambda wm: True , walkState)
 addTransition(walkState , walkTime , stopWalkState)
@@ -96,8 +96,10 @@ addStates(myFSM , waitSittingState , waitStandingState ,  standState ,
           sayLetsWalkState , sayGoodbyeState , sitState , restState ,
           shutdownState , walkState , stopWalkState, rotate90State , 
           uTurnState , sayRotateState, sayUTurnState)
+ 
+setPrintTransition(myFSM, True)
 
 # Set the initial state to waitSittingState
-setInitialState(myFSM , waitSittingState)
+setInitialState(myFSM , standState)
 
 
