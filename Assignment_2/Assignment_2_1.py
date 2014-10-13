@@ -35,20 +35,37 @@ def start_position(wm):
 def current_position(wm):
     return readWM(wm, "odometry", "wz")
 
+
 def rotate(wm):
-    start_position(wm)
-   # print(readWM(wm, "start_angle"))
-    if readWM(wm, "start_angle") + current_position(wm) >=readWM(wm, "start_angle") + 0.25:
+    if current_position(wm) < 0:
+        current_angle = current_position(wm) + 2*pi
+    else:
+        current_angle = current_position(wm)
+    if readWM(wm, "start_angle") < 0:
+        angle = readWM(wm, "start_angle") + 2 * pi
+    else:
+        angle = readWM(wm, "start_angle")
+    if abs(angle - current_angle) >=  pi/2 - 0.1:
         return True
     else:
         return False
 
 def uTurn(wm):
-    start_position(wm)
-    if start_angle + current_position(wm) >= start_angle + 0.5:
+    if current_position(wm) < 0:
+        current_angle = current_position(wm) + 2*pi
+    else:
+        current_angle = current_position(wm)
+    if readWM(wm, "start_angle") < 0:
+        angle = readWM(wm, "start_angle") + 2 * pi
+    else:
+        angle = readWM(wm, "start_angle")
+    print(readWM(wm,"start_angle"), current_position(wm), abs(angle - current_angle), pi)
+    if abs(angle - current_angle) >=  pi :
         return True
     else:
         return False
+    
+   
 
 ## CREATE STATES ##
 
@@ -57,16 +74,19 @@ standState = createState("standState", stand)
 restState = createState("restState", rest)
 walkState = createState("walkState", startWalking)
 stopWalkState = createState("stopWalkState", stopWalking)
-rotate90State = createState("rotate90State", lambda : setWalkVelocity(0, 0, 1))
-uTurnState = createState("uTurnState", lambda : setWalkVelocity(1, 0, 1))
+stopWalk2State = createState("stopWalk2State", stopWalking)
+stopWalk3State = createState("stopWalk3State", stopWalking)
+rotate90State = createState("rotate90State", lambda : setWalkVelocity(0, 0, 0.2))
+uTurnState = createState("uTurnState", lambda : setWalkVelocity(1, 0, 0.3))
 shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
+#stopRotateState = createState
 
 # Create states for talking
 
-sayLetsWalkState = createState("sayLetsWalkState", lambda : say("Let us waaalk!"))
-sayRotateState = createState("sayRotateState", lambda : say("Let us spinn!"))
-sayUTurnState = createState("sayUTurnState", lambda : say("Let us walk in an arch!"))
+sayLetsWalkState = createState("sayLetsWalkState", lambda : say("go!"))
+sayRotateState = createState("sayRotateState", lambda : say("spinn!"))
+sayUTurnState = createState("sayUTurnState", lambda : say("u turn!"))
 sayGoodbyeState = createState("sayGoodbyeState", lambda : say("Goodbye World!"))
 
  
@@ -75,18 +95,25 @@ sayGoodbyeState = createState("sayGoodbyeState", lambda : say("Goodbye World!"))
 waitSittingState = createState("waitSittingState", lambda : None)
 waitStandingState = createState("waitStandingState", lambda : None)
 
+# Create states for function calls
+
+startAngleState = createState("startAngleState", lambda wm : start_position(wm))
+startAngle2State = createState("startAngle2State", lambda wm : start_position(wm))
+
+
 # Add transitions according to the state diagram
-#addTransition(waitSittingState , detectTouch , standState)
+addTransition(waitSittingState , detectTouch , standState)
 addTransition(standState , lambda wm: True , sayLetsWalkState)
 addTransition(sayLetsWalkState, lambda wm: True , walkState)
 addTransition(walkState , walkTime , stopWalkState)
 addTransition(stopWalkState, lambda wm: True , sayRotateState)
-addTransition(sayRotateState, lambda wm: True , rotate90State)
-addTransition(rotate90State, rotate , sayUTurnState)
-addTransition(sayUTurnState, lambda wm: True , uTurnState)
-addTransition(uTurnState, uTurn , stopWalkState)
-addTransition(stopWalkState, lambda wm: True , sayGoodbyeState)
-addTransition(sayGoodbyeState , lambda wm: True , sitState)
+addTransition(sayRotateState, lambda wm: True , startAngleState)
+addTransition(startAngleState, lambda wm: True , rotate90State)
+addTransition(rotate90State, rotate , stopWalk2State)
+addTransition(stopWalk2State, lambda wm: True , startAngle2State)
+addTransition(startAngle2State, lambda wm: True , uTurnState)
+addTransition(uTurnState, uTurn , stopWalk3State)
+addTransition(stopWalk3State, lambda wm: True, sitState)
 addTransition(sitState , lambda wm: True , restState)
 addTransition(restState , lambda wm: True , shutdownState)
 
@@ -95,11 +122,12 @@ myFSM = createFSM("fsm")
 addStates(myFSM , waitSittingState , waitStandingState ,  standState , 
           sayLetsWalkState , sayGoodbyeState , sitState , restState ,
           shutdownState , walkState , stopWalkState, rotate90State , 
-          uTurnState , sayRotateState, sayUTurnState)
+          uTurnState , sayRotateState, sayUTurnState, startAngleState,
+          startAngle2State, stopWalk2State, stopWalk3State)
  
 setPrintTransition(myFSM, True)
 
 # Set the initial state to waitSittingState
-setInitialState(myFSM , standState)
+setInitialState(myFSM , waitSittingState)
 
 
