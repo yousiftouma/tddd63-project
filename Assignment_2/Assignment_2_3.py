@@ -16,20 +16,39 @@ def detectTouch(wm):
 
 def seeBall(wm):
     camera_data_balls = readWM(wm, "balls")
-    print camera_data_balls[0][0]
-    if camera_data_balls[0][0]["pa"] >= 1000:
-        print camera_data_balls[0][0]
+    print (largestBall(wm)["pa"])
+    if largestBall(wm)["pa"] >= 70:
+        print( largestBall(wm)["pa"], "see ball" )
         return True
     else:
         return False
 
 def noSeeBall(wm):
     camera_data_balls = readWM(wm, "balls")
-    
-    if camera_data_balls[0][0]["pa"] <= 1000:
+    print (largestBall(wm)["pa"])
+    if largestBall(wm)["pa"] <= 70:
+        print( largestBall(wm)["pa"] , "no ball")
         return True
     else:
         return False
+
+def largestBall(wm):
+    camera_data_balls  = readWM ( wm , "balls" )
+    if not camera_data_balls:
+        return None
+    else:
+        # Get the latest observation
+        cur_frame = camera_data_balls[0]
+
+        # The object with the largest area is most likely the true ball
+        largest_ball = None
+        for b in cur_frame:
+            if ( not largest_ball ) or (largest_ball["pa"] < b["pa"]):
+                largest_ball = b
+        return largest_ball
+
+def lookAtBall(wm):
+    return turnHead(largestBall(wm)["yaw"], largestBall(wm)["pitch"])
 
 def entryTime(wm):
     return readWM(wm, "time", "entry")
