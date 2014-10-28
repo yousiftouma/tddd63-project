@@ -19,7 +19,7 @@ def seeBall(wm):
         return False
     elif largestBall(wm)["pa"] >= 200:
        # print(largestBall(wm)["pa"], largestBall(wm)["camera"], "see ball")
-        print(largestBall(wm))
+        print(largestBall(wm)['camera'] , "SeeBall")
         return True
     else:
         return False
@@ -30,10 +30,19 @@ def noSeeBall(wm):
         return False
     elif largestBall(wm)["pa"] <= 200:
        # print(largestBall(wm)["pa"], largestBall(wm)["camera"], "no ball")
-        print(largestBall(wm))
+        print(largestBall(wm)['camera'] , "noSeeBall")
         return True
     else:
         return False
+
+def shakeHeadTime(wm):
+     t = currentTime(wm) - entryTime(wm)
+     if t >= 4*1.6:
+         print(t)
+         return True
+     else:
+         return False
+
 
 def largestBall(wm):
     camera_data_balls  = readWM(wm,"balls")
@@ -88,27 +97,35 @@ def currentTime(wm):
     return readWM(wm, "time", "current")
 
 def topCameraCheck(wm):
+    current_camera  = readWM(wm,"balls")[0][0]["camera"]
+    print current_camera
     if largestBall(wm) == None:
         return False
-    elif largestBall(wm)["camera"] == "top":
+    elif current_camera == "top":
         return True
     else:
         return False
 
 def bottomCameraCheck(wm):
+    print readWM(wm, "balls")[0][0]
+    current_camera  = readWM(wm,"balls")[0][0]["camera"]
+    print current_camera
     if largestBall(wm) == None:
         return False
-    elif largestBall(wm)["camera"] == "bottom":
+    elif current_camera == "bottom":
         return True
     else:
         return False
 
 def headTurning(wm):
     t = currentTime(wm) - entryTime(wm) 
-    if t <= 2.0857:
-        turnHead(0 + t, -0.6720)
-    elif t >= 2.0857 and t <= 2.0857*3:
-        turnHead(2.0857 - (t-2.0857))   
+    if t <= 1.5:
+        print(t)
+        return turnHead(0 + t, 0.5149)
+    elif t >= 1.5 and t <= 1.5*3:
+        return turnHead(1.5 - (t-1.5), 0.5149)
+    elif t >= 1.5*3 and t <= 1.5*4:
+        return turnHead(-1.5 + (t-1.5*3), 0.5149)
         
 
 # Create states
@@ -143,20 +160,20 @@ addStates(lookBallFSM, shakeHeadState, stopWalkState,
           topLedState, sayNoBallState, lookAtBallState, rotateState,
           shakeHeadState2,topLedState2)
 
-setInitialState(lookBallFSM, hangHeadState)
+setInitialState(lookBallFSM, shakeHeadState)
 
-addTransition(hangHeadState, seeBall, lookAtBallState)
-addTransition(hangHeadState, noSeeBall, shakeHeadState)
+#addTransition(hangHeadState, seeBall, lookAtBallState)
+#addTransition(hangHeadState, noSeeBall, shakeHeadState)
 
 addTransition(shakeHeadState, seeBall, lookAtBallState)
 #addTransition(shakeHeadState, noSeeBall, setBottomCameraState)
-addTransition(shakeHeadState, noSeeBall, setBottomCameraState)
+addTransition(shakeHeadState, shakeHeadTime, setBottomCameraState)
 addTransition(setBottomCameraState, bottomCameraCheck, bottomLedState)
 
-addTransition(bottomLedState, seeBall, lookAtBallState)
-addTransition(bottomLedState, noSeeBall, shakeHeadState2)
+#addTransition(bottomLedState, seeBall, lookAtBallState)
+addTransition(bottomLedState, lambda wm: True, shakeHeadState2)
 addTransition(shakeHeadState2, seeBall, lookAtBallState)
-addTransition(shakeHeadState2, noSeeBall, setTopCameraState)
+addTransition(shakeHeadState2, shakeHeadTime, setTopCameraState)
 addTransition(setTopCameraState, topCameraCheck, topLedState)
 
 addTransition(topLedState, seeBall, lookAtBallState)
@@ -165,7 +182,7 @@ addTransition(topLedState, noSeeBall, rotateState)
 # repeat after first 90 degrees
 
 addTransition(rotateState, rotateTime, stopWalkState)
-addTransition(stopWalkState, lambda wm: True, hangHeadState)
+addTransition(stopWalkState, lambda wm: True, shakeHeadState)
 
 # if ball is lost from sight
 
@@ -174,7 +191,7 @@ addTransition(lookAtBallState, noSeeBall, setTopCameraState2)
 addTransition(setTopCameraState2, topCameraCheck, topLedState2)
 
 addTransition(topLedState2, seeBall, lookAtBallState)
-addTransition(topLedState2, noSeeBall, hangHeadState)
+addTransition(topLedState2, noSeeBall, shakeHeadState)
 
 
 
