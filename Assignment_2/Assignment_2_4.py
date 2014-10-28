@@ -103,6 +103,14 @@ def bottomCameraCheck(wm):
     else:
         return False
 
+def headTurning(wm):
+    t = currentTime(wm) - entryTime(wm) 
+    if t <= 2.0857:
+        turnHead(0 + t, -0.6720)
+    elif t >= 2.0857 and t <= 2.0857*3:
+        turnHead(2.0857 - (t-2.0857))   
+        
+
 # Create states
 
 waitSittingState = createState("waitSittingState", lambda : None)
@@ -110,8 +118,8 @@ sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 standState = createState("standState", stand)
 stopWalkState = createState("stopWalkState", stopWalking)
-shakeHeadState = createState("shakeHeadState", hMShake)
-shakeHeadState2 = createState("shakeHeadState2", hMShake)
+shakeHeadState = createState("shakeHeadState", lambda wm: headTurning(wm))
+shakeHeadState2 = createState("shakeHeadState2", lambda wm: headTurning(wm))
 hangHeadState = createState("hangHeadState", hMHang)
 shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
