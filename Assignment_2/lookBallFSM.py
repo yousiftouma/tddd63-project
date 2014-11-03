@@ -1,16 +1,12 @@
+
 # Import the FSM functions
 from fsm.functions import (createState, createFSM, addTransition,
     addStates, setInitialState, readWM, writeWM, setPrintTransition)	
 
 # Import primitive robot behaviors
 from api.pubapi import (sit, stand, rest, say, shutdown,
-    startWalking, turnHead, hMShake, hMHang, setCamera,
+    startWalking, turnHead, setCamera,
     say, setLED, setWalkVelocity, stopWalking)
-
-# Functions to use world model
-
-def detectTouch(wm):
-    return readWM(wm, "tactile", "middle")
 
 
 def seeBall(wm):
@@ -36,7 +32,6 @@ def noSeeBall(wm):
 def shakeHeadTime(wm):
      t = currentTime(wm) - entryTime(wm)
      if t >= 4*1.5:
-         print(t)
          return True
      else:
          return False
@@ -110,38 +105,32 @@ def headTurning(wm):
         return turnHead(1.2 - (t-1.2), 0.5149)
     elif t >= 1.2*3 and t <= 1.2*4:
         return turnHead(-1.2 + (t-1.2*3), 0.5149)
-        
 
-# Create states
 
-waitSittingState = createState("waitSittingState", lambda : None)
-sitState = createState("sitState", sit)
-restState = createState("restState", rest)
-standState = createState("standState", stand)
-stopWalkState = createState("stopWalkState", stopWalking)
+#Create States
+
+
 shakeHeadState = createState("shakeHeadState", lambda wm: headTurning(wm))
 shakeHeadState2 = createState("shakeHeadState2", lambda wm: headTurning(wm))
-hangHeadState = createState("hangHeadState", hMHang)
-shutdownState = createState("shutdownState",
-				lambda : shutdown("Final state reached"))
+
 setTopCameraState = createState("setTopCameraState", lambda : setCamera("top"))
 setBottomCameraState = createState("setBottomCameraState", lambda : setCamera("bottom"))
 setTopCameraState2 = createState("setTopCameraState2", lambda : setCamera("top"))
-sayBallState = createState("sayBallState", lambda : say("ball!"))
-sayNoBallState = createState("sayNoBallState", lambda : say("no fucking ball found!"))
 lookAtBallState = createState("lookAtBallState", lambda wm : lookAtBall(wm))
 rotateState = createState("rotateState", lambda : setWalkVelocity(0, 0, 0.5))
 bottomLedState = createState("bottomLedState", lambda : setLED("eyes", 1, 0, 0)) # Red
 topLedState = createState("topLedState", lambda : setLED("eyes", 0, 1, 0)) # Green
 topLedState2 = createState("topLedState2", lambda : setLED("eyes", 0, 1, 0)) # Green
+stopWalkState = createState("stopWalkState", stopWalking)
+
 
 # FSM for searching for the ball
 
 lookBallFSM = createFSM("lookBallFSM")
-addStates(lookBallFSM, shakeHeadState, stopWalkState,  
-          hangHeadState, setTopCameraState, setTopCameraState2, 
-          setBottomCameraState, sayBallState, bottomLedState,
-          topLedState, sayNoBallState, lookAtBallState, rotateState,
+addStates(lookBallFSM, shakeHeadState, stopWalkState,
+          setTopCameraState, setTopCameraState2, 
+          setBottomCameraState, bottomLedState,
+          topLedState, lookAtBallState, rotateState,
           shakeHeadState2,topLedState2)
 
 setInitialState(lookBallFSM, shakeHeadState)
@@ -176,26 +165,3 @@ addTransition(topLedState2, noSeeBall, shakeHeadState)
 
 
 setPrintTransition(lookBallFSM, True)
-
-
-
-
-# The main FSM
-
-# Transitions for the mainFSM
-
-addTransition(waitSittingState, detectTouch, standState)
-addTransition(standState, lambda wm: True, lookBallFSM)
-addTransition(lookBallFSM, detectTouch, sitState)
-addTransition(sitState, lambda wm: True, restState)
-addTransition(restState, lambda wm: True, shutdownState)
-
-mainFSM = createFSM("mainFSM")
-addStates(mainFSM, waitSittingState, standState, sitState,
-          restState, shutdownState, lookBallFSM)
-          
-setInitialState(mainFSM, waitSittingState)
-
-# Prints all the completed transitions
-
-setPrintTransition(mainFSM, True)
