@@ -4,27 +4,15 @@ from fsm.functions import (createState, createFSM, addTransition,
 
 # Import primitive robot behaviors
 from api.pubapi import (sit, stand, rest, say, shutdown,
-    startWalking, turnHead, setCamera,
+    startWalking, turnHead, setCamera, resetSubFSM,
     say, setLED, setWalkVelocity, stopWalking)
 
-#import FSM
+# Import FSM
 from lookBallFSM import *
 from followBallFSM import *
 
-# Functions to use world model
-
-def detectTouch(wm):
-    return readWM(wm, "tactile", "middle")
-
-def seeBall(wm):
-    camera_data_balls = readWM(wm, "balls")
-    if largestBall(wm) == None:
-        return False
-    elif largestBall(wm)["pa"] >= 200:
-        print(largestBall(wm)['camera'] , "SeeBall")
-        return True
-    else:
-        return False
+# Import functions we've written
+from functions import (detectTouch, seeBall)
 
 # Create states
 
@@ -34,6 +22,9 @@ restState = createState("restState", rest)
 standState = createState("standState", stand)
 shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
+stopWalkState = createState("stopWalkState", stopWalking)
+resetFollowBallState = createState("resetFollowBallState", lambda : resetSubFSM(followBallFSM))
+resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(lookBallFSM))
 
 # The main FSM
 
@@ -41,16 +32,25 @@ shutdownState = createState("shutdownState",
 
 addTransition(waitSittingState, detectTouch, standState)
 addTransition(standState, lambda wm: True, lookBallFSM)
+#addTransition(lookBallFSM, seeBall, resetFollowBallState)
+#addTransition(resetFollowBallState, lambda wm: True, followBallFSM)
 addTransition(lookBallFSM, seeBall, followBallFSM)
-addTransition(followBallFSM, noSeeBall, lookBallFSM)
+addTransition(followBallFSM, noSeeBall, resetFollowBallState)
+
+addTransition(resetFollowBallState, lambda wm: True, stopWalkState)
+#addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
+addTransition(stopWalkState, lambda wm: True, lookBallFSM)
+
 addTransition(followBallFSM, detectTouch, sitState)
 addTransition(lookBallFSM, detectTouch, sitState)
+
 addTransition(sitState, lambda wm: True, restState)
 addTransition(restState, lambda wm: True, shutdownState)
 
 mainFSM = createFSM("mainFSM")
 addStates(mainFSM, waitSittingState, standState, sitState,
-          restState, shutdownState, lookBallFSM, followBallFSM)
+          restState, shutdownState, lookBallFSM, followBallFSM,
+          stopWalkState, resetLookBallState, resetFollowBallState)
           
 setInitialState(mainFSM, waitSittingState)
 
