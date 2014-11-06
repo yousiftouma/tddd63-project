@@ -29,6 +29,22 @@ def averageLook(wm):
 def lookAtBall(wm):
     return turnHead(averageLook(wm)[0], averageLook(wm)[1])
 
+def lookAtBall2(wm):
+    camera_data_balls  = readWM(wm,"balls")
+    if not camera_data_balls:
+        return None
+    else:
+        # Get the latest observation
+        cur_frame = camera_data_balls[0]
+
+        # The object with the largest area is most likely the true ball
+        largest_ball = None
+        for b1 in cur_frame:
+            if (not largest_ball) or ( (largest_ball["pa"] < b1["pa"]) and largest_ball["pa"] > 300):
+                largest_ball = b1
+                if largest_ball:
+                    return turnHead(largest_ball["yaw"], largest_ball["pitch"])
+
 def largestBall(wm):
     camera_data_balls  = readWM(wm,"balls")
     if not camera_data_balls:
@@ -53,7 +69,19 @@ def positiveYaw(wm):
 
 def negativeYaw(wm):
     if averageLook(wm)[0] < -0.1:
-        print ("negativ", averageLook(wm)[0])
+        #print ("negativ", averageLook(wm)[0])
+        return True
+    else:
+        return False
+
+def farNegativeYaw(wm):
+    if averageLook(wm)[0] < -0.1 and largestBall(wm)["x"] >= 500:
+        return True
+    else:
+        return False
+
+def farPositiveYaw(wm):
+    if averageLook(wm)[0] > 0.1 and largestBall(wm)["x"] >= 500:
         return True
     else:
         return False
@@ -70,7 +98,7 @@ def switchCamera(wm):
 
 def closeToFeet(wm):
     print largestBall(wm)["x"]
-    return (largestBall(wm)["x"] <= 160)
+    return (largestBall(wm)["x"] <= 180)
        
 
 def entryTime(wm):
@@ -126,3 +154,16 @@ def headTurning(wm):
         return turnHead(1.2 - (t-1.2), 0.5149)
     elif t >= 1.2*3 and t <= 1.2*4:
         return turnHead(-1.2 + (t-1.2*3), 0.5149)
+
+def leftFoot(wm):
+    return(largestBall(wm)["px"] < (largestBall(wm)["px_size"]/2))
+
+def rightFoot(wm):
+     return(largestBall(wm)["px"] >= (largestBall(wm)["px_size"]/2))
+
+def detectLeftKick(wm):
+    return readWM(wm, "bumper", "left")
+
+def detectRightKick(wm):
+    return readWM(wm, "bumper", "right")
+
