@@ -70,5 +70,5 @@ addTransition(topLedState2, noSeeBall, shakeHeadState)
 
 # Prints out completed transitions
 
-#setPrintTransition(lookBallFSM, True)
+setPrintTransition(lookBallFSM, True)
 

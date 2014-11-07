@@ -8,16 +8,11 @@ from api.pubapi import (sit, stand, rest, say, shutdown,
     say, setLED, setWalkVelocity, stopWalking)
 
 # Import FSM
-from lookBallFSM import (lookBallFSM, shakeHeadState, shakeHeadState2, setTopCameraState, 
-                         setBottomCameraState, setTopCameraState2, lookAtBallState, 
-                         rotateState, bottomLedState, topLedState, topLedState2, 
-                         stopWalkState)
+from lookBallFSM import (lookBallFSM)
                          
 
 
-from kickBallFSM import (kickBallFSM, rotateLeftState, rotateRightState,
-                           walkToBallState, watchBallState, stopWalkingState,
-                           stopWalkingState2, setBottomCamState, setBottomLedState)
+from kickBallFSM import (kickBallFSM)
 
 # Import functions we've written
 from functions import (detectTouch, seeBall, noSeeBall)
@@ -41,14 +36,17 @@ resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(look
 
 addTransition(waitSittingState, detectTouch, standState)
 addTransition(standState, lambda wm: True, lookBallFSM)
-#addTransition(lookBallFSM, seeBall, resetFollowBallState)
+#addTransition(lookBallFSM, seeBall, resetLookBallState)
 #addTransition(resetKickBallState, lambda wm: True, kickBallFSM)
+#addTransition(resetLookBallState, lambda wm: True, kickBallFSM)
 addTransition(lookBallFSM, seeBall, kickBallFSM)
 addTransition(kickBallFSM, noSeeBall, resetKickBallState)
 
 addTransition(resetKickBallState, lambda wm: True, stopWalkState)
 #addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
-addTransition(stopWalkState, lambda wm: True, lookBallFSM)
+addTransition(stopWalkState, lambda wm: True, resetLookBallState)
+#addTransition(stopWalkState, lambda wm: True, lookBallFSM)
+addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
 
 addTransition(kickBallFSM, detectTouch, stopWalkState2)
 addTransition(lookBallFSM, detectTouch, stopWalkState2)

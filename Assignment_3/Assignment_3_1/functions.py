@@ -40,15 +40,15 @@ def lookAtBall2(wm):
         # The object with the largest area is most likely the true ball
         largest_ball = None
         for b1 in cur_frame:
-            if (not largest_ball) or ( (largest_ball["pa"] < b1["pa"]) and largest_ball["pa"] > 300):
+            if (not largest_ball) or (largest_ball["pa"] < b1["pa"]):
                 largest_ball = b1
-                if largest_ball:
+                if  largest_ball["pa"] > 100:
                     return turnHead(largest_ball["yaw"], largest_ball["pitch"])
 
 def largestBall(wm):
     camera_data_balls  = readWM(wm,"balls")
     if not camera_data_balls:
-        return None
+        return False
     else:
         # Get the latest observation
         cur_frame = camera_data_balls[0]
@@ -58,7 +58,10 @@ def largestBall(wm):
         for b1 in cur_frame:
             if (not largest_ball1) or (largest_ball1["pa"] < b1["pa"]):
                 largest_ball1 = b1
-        return largest_ball1
+        if (currentTime(wm) - largest_ball1["t"]) <= 3:         
+            return largest_ball1
+        else:
+            return False
 
 def positiveYaw(wm):
     if averageLook(wm)[0] > 0.1:
@@ -98,7 +101,7 @@ def switchCamera(wm):
 
 def closeToFeet(wm):
     print largestBall(wm)["x"]
-    return (largestBall(wm)["x"] <= 180)
+    return (largestBall(wm)["x"] <= 130)
        
 
 def entryTime(wm):
@@ -117,6 +120,8 @@ def seeBall(wm):
     camera_data_balls = readWM(wm, "balls")
     if largestBall(wm) == None:
         return False
+    elif not largestBall(wm):
+        return False
     elif largestBall(wm)["pa"] >= 200:
         print(largestBall(wm)['camera'] , "SeeBall")
         return True
@@ -127,6 +132,8 @@ def noSeeBall(wm):
     camera_data_balls = readWM(wm, "balls")
     if largestBall(wm) == None:
         return False
+    elif not largestBall(wm):
+        return True
     elif largestBall(wm)["pa"] <= 200:
         print(largestBall(wm)['camera'] , "noSeeBall")
         return True
@@ -149,11 +156,11 @@ def rotateTime(wm):
 def headTurning(wm):
     t = currentTime(wm) - entryTime(wm) 
     if t <= 1.2:
-        return turnHead(0 + t, 0.5149)
+        return turnHead(0 + t, 0.3149)
     elif t >= 1.2 and t <= 1.2*3:
-        return turnHead(1.2 - (t-1.2), 0.5149)
+        return turnHead(1.2 - (t-1.2), 0.3149)
     elif t >= 1.2*3 and t <= 1.2*4:
-        return turnHead(-1.2 + (t-1.2*3), 0.5149)
+        return turnHead(-1.2 + (t-1.2*3), 0.3149)
 
 def leftFoot(wm):
     return(largestBall(wm)["px"] < (largestBall(wm)["px_size"]/2))
@@ -161,9 +168,5 @@ def leftFoot(wm):
 def rightFoot(wm):
      return(largestBall(wm)["px"] >= (largestBall(wm)["px_size"]/2))
 
-def detectLeftKick(wm):
-    return readWM(wm, "bumper", "left")
 
-def detectRightKick(wm):
-    return readWM(wm, "bumper", "right")
 
