@@ -58,48 +58,63 @@ def largestBall(wm):
         for b1 in cur_frame:
             if (not largest_ball1) or (largest_ball1["pa"] < b1["pa"]):
                 largest_ball1 = b1
-        if (currentTime(wm) - largest_ball1["t"]) <= 3:         
-            return largest_ball1
+        if (currentTime(wm) - largest_ball1["t"]) <= 3:
+            if  largest_ball1["pa"] > 100:
+                return largest_ball1
         else:
             return False
 
 def positiveYaw(wm):
-    if averageLook(wm)[0] > 0.1:
+    if largestBall(wm) == None or largestBall(wm) == False:
+        return False
+    if largestBall(wm)["yaw"] > 0.1:
         #print ("positivt", averageLook(wm)[0])
         return True
     else:
         return False
 
 def negativeYaw(wm):
-    if averageLook(wm)[0] < -0.1:
+    if largestBall(wm) == None or largestBall(wm) == False:
+        return False
+    if largestBall(wm)["yaw"] < -0.1:
         #print ("negativ", averageLook(wm)[0])
         return True
     else:
         return False
 
 def farNegativeYaw(wm):
-    if averageLook(wm)[0] < -0.1 and largestBall(wm)["x"] >= 500:
+    if largestBall(wm) == None or largestBall(wm) == False:
+        return False
+    if largestBall(wm)["yaw"] < -0.1 and largestBall(wm)["x"] >= 500:
         return True
     else:
         return False
 
 def farPositiveYaw(wm):
-    if averageLook(wm)[0] > 0.1 and largestBall(wm)["x"] >= 500:
+    if largestBall(wm) == None or largestBall(wm) == False:
+        return False
+    if largestBall(wm)["yaw"] > 0.1 and largestBall(wm)["x"] >= 500:
         return True
     else:
         return False
 
 def zeroYaw(wm):
-    if averageLook(wm)[0] <= 0.1 and averageLook(wm)[0] >= -0.1:
+    if largestBall(wm) == None or largestBall(wm) == False:
+        return False
+    if largestBall(wm)["yaw"] <= 0.1 and largestBall(wm)["yaw"] >= -0.1:
        # print ("noll", averageLook(wm)[0])
         return True
     else:
         return False
 
 def switchCamera(wm):
+    if largestBall(wm) == None or largestBall(wm) == False:
+        return False
     return (largestBall(wm)["x"] <= 700)
 
 def closeToFeet(wm):
+    if largestBall(wm) == None or largestBall(wm) == False:
+        return False
     print largestBall(wm)["x"]
     return (largestBall(wm)["x"] <= 130)
        
