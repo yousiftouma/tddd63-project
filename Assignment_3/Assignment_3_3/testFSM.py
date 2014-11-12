@@ -6,13 +6,10 @@ from fsm.functions import (createState, createFSM, addTransition,
 from api.pubapi import (sit, stand, rest, say, shutdown,
     startWalking, turnHead, setCamera, resetSubFSM,
     say, setLED, setWalkVelocity, stopWalking)
-
-# Import FSM
-from lookBallFSM import (lookBallFSM)
-from kickBallFSM import (kickBallFSM)                         
+                       
 
 # Import functions we've written
-from functions import (detectTouch, seeBall, noSeeBall)
+from functions import (detectTouch)
 
 # Create states
 
@@ -23,39 +20,29 @@ standState = createState("standState", stand)
 shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
 stopWalkState = createState("stopWalkState", stopWalking)
-stopWalkState2 = createState("stopWalkState2", stopWalking)
-resetKickBallState = createState("resetKickBallState", lambda : resetSubFSM(kickBallFSM))
-resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(lookBallFSM))
+circleLeftState = createState("circleLeftState", lambda: setWalkVelocity(0, 1, -0.45))
+circleRightState = createState("circleRightState", lambda: setWalkVelocity(0, 1, 0.45))
 
 # The main FSM
 
 # Transitions for the mainFSM
 
 addTransition(waitSittingState, detectTouch, standState)
-addTransition(standState, lambda wm: True, lookBallFSM)
-addTransition(lookBallFSM, seeBall, kickBallFSM)
-addTransition(kickBallFSM, noSeeBall, resetKickBallState)
+addTransition(standState, lambda wm: True, circleLeftState)
 
-addTransition(resetKickBallState, lambda wm: True, stopWalkState)
-addTransition(stopWalkState, lambda wm: True, resetLookBallState)
-addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
+addTransition(circleLeftState, detectTouch, stopWalkState)
 
-addTransition(kickBallFSM, detectTouch, stopWalkState2)
-addTransition(lookBallFSM, detectTouch, stopWalkState2)
-
-addTransition(stopWalkState2, lambda wm: True, sitState)
+addTransition(stopWalkState, lambda wm: True, sitState)
 addTransition(sitState, lambda wm: True, restState)
 addTransition(restState, lambda wm: True, shutdownState)
 
-
 mainFSM = createFSM("mainFSM")
 addStates(mainFSM, waitSittingState, standState, sitState,
-          restState, shutdownState, lookBallFSM, kickBallFSM ,
-          stopWalkState, stopWalkState2, resetKickBallState, resetLookBallState)
+          restState, shutdownState, circleLeftState, circleRightState,
+          stopWalkState)
           
 setInitialState(mainFSM, waitSittingState)
 
 # Prints all the completed transitions
 
 setPrintTransition(mainFSM, True)
-

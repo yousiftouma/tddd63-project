@@ -13,8 +13,8 @@ from functions import (detectTouch, seeGoal, seeGoalLeft, seeGoalRight,
 
 # Create states
 
-circleLeftState = createState("circleLeftState", lambda: setWalkVelocity(0, 0, 0.7))
-circleRightState = createState("circleRightState", lambda: setWalkVelocity(0,0, -0.7))
+circleLeftState = createState("circleLeftState", lambda: setWalkVelocity(0, 1, -0.45))
+circleRightState = createState("circleRightState", lambda: setWalkVelocity(0, 1, 0.45))
 lookUpState = createState("lookUpState", lambda wm: lookUp(wm))
 lookDownState = createState("lookDownState", lambda: turnHead(0, 0))
 stopWalkingState = createState("stopWalkingState", stopWalking)
@@ -55,15 +55,17 @@ addTransition(topLedState3, lambda wm: True, circleRightState)
 addTransition(stopRotateState, lambda wm: True, lookUpState)
 
 addTransition(lookUpState, seeGoal, stopWalkingState)
-addTransition(lookUpState, seeGoalRight, rotateLeftState)
-addTransition(lookUpState, seeGoalLeft, rotateRightState)
+addTransition(lookUpState, seeGoalRight, circleLeftState)
+addTransition(lookUpState, seeGoalLeft, circleRightState)
 
 addTransition(stopWalkingState, lambda wm: True, lookDownState)
 
 findGoalFSM = createFSM("findGoalFSM")
 addStates(findGoalFSM, stopWalkingState, lookUpState, lookDownState,
-          rotateLeftState, rotateRightState, stopRotateState, topLedState,
-          bottomLedState, setBottomCameraState, setTopCameraState, lookForGoalState)
+          circleLeftState, circleRightState, stopRotateState, topLedState,
+          topLedState2, topLedState3, bottomLedState, bottomLedState2, 
+          setBottomCameraState, setBottomCameraState2, setTopCameraState, 
+          setTopCameraState2)
           
 setInitialState(findGoalFSM, setTopCameraState)
 

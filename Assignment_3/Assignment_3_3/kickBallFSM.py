@@ -11,7 +11,8 @@ from api.pubapi import (
 # Import functions we've written
 from functions import (averageLook, lookAtBall, largestBall, positiveYaw,
     negativeYaw, zeroYaw, switchCamera, entryTime, currentTime, cameraDelay,
-    closeToFeet, leftFoot, rightFoot, farNegativeYaw, farPositiveYaw, lookAtBall2)
+    closeToFeet, leftFoot, rightFoot, farNegativeYaw, farPositiveYaw, lookAtBall2,
+                       seeGoal)
 
 # Import findGoalFSM
 from findGoalFSM import (findGoalFSM)
@@ -25,7 +26,7 @@ archLeftState = createState("archLeftState", lambda : setWalkVelocity(0.65, 0, 0
 archRightState = createState("archRightState", lambda : setWalkVelocity(0.65, 0, -0.15))
 walkToBallState = createState("walkToBallState", lambda : setWalkVelocity(1, 0, 0))
 watchBallState = createState("watchBallState", lambda wm : lookAtBall2(wm))
-stopWalkingState3 = createState("stopWalkingState", stopWalking)
+stopWalkingState = createState("stopWalkingState", stopWalking)
 stopWalkingState2 = createState("stopWalkingState2", stopWalking) 
 setBottomCamState = createState("setBottomCamState", lambda : setCamera("bottom"))
 setBottomLedState = createState("setBottomLedState", lambda : setLED("eyes", 1,0,0))
@@ -61,14 +62,14 @@ addTransition(rotateLeftState, lambda wm: True, watchBallState)
 addTransition(archLeftState, zeroYaw, walkToBallState)
 addTransition(archLeftState, lambda wm: True, watchBallState)
 
-addTransition(walkToBallState, closeToFeet, stopWalkingState3)
+addTransition(walkToBallState, closeToFeet, stopWalkingState)
 addTransition(walkToBallState, switchCamera, setBottomCamState)
 addTransition(walkToBallState, lambda wm: True, watchBallState)
 
 addTransition(setBottomCamState, cameraDelay, setBottomLedState)
 addTransition(setBottomLedState, lambda wm: True, watchBallState)
 
-addTransition(stopWalkingState3, lambda wm: True, findGoalFSM)
+addTransition(stopWalkingState, lambda wm: True, findGoalFSM)
 addTransition(findGoalFSM, seeGoal, stopWalkingState2)
 
 addTransition(stopWalkingState2, leftFoot, kickLeftState)
