@@ -116,7 +116,7 @@ def closeToFeet(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     print largestBall(wm)["x"]
-    return (largestBall(wm)["x"] <= 130)
+    return (largestBall(wm)["x"] <= 100)
        
 
 def entryTime(wm):
@@ -148,6 +148,7 @@ def noSeeBall(wm):
     if largestBall(wm) == None:
         return False
     elif not largestBall(wm):
+        print("noSeeBall")
         return True
     elif largestBall(wm)["pa"] <= 200:
         print(largestBall(wm)['camera'] , "noSeeBall")
@@ -202,10 +203,12 @@ def largestGoal(wm):
             return None
 
 def seeGoal(wm):
-    if largestGoal(wm) == None:
+    if largestGoal(wm):
+        print(largestGoal(wm))
+    if not largestGoal(wm):
         return False
-    elif largestGoal(wm)["goal_type"] == "center":
-        print ("center", largestGoal(wm)["pa"], largestGoal(wm))
+    elif largestGoal(wm)["goal_type"] in ["left", "right", "single"]:
+        print (largestGoal(wm)["goal_type"], largestGoal(wm)["pa"], largestGoal(wm)["px"], "seeGoal")
         return True
 
 def seeGoalLeft(wm):
@@ -248,3 +251,8 @@ def lookForGoal(wm):
     elif t >= 1.2 and t <= 1.2*3:
         return turnHead(1.2 - (t-1.2), 0)
     
+def oneStep(wm):
+    return (currentTime(wm) - entryTime(wm) >= 0.5)
+
+def betweenFeet(wm):
+    return (abs(largestBall(wm)["px"] - (largestBall(wm)["px_size"]/2)) <= 50)
