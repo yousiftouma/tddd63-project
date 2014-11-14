@@ -16,12 +16,13 @@ from functions import (leftFoot, rightFoot)
 kickRightState = createState("kickRightState", lambda : kick("right"))
 kickLeftState = createState("kickLeftState", lambda : kick("left"))
 stopWalkingState = createState("stopWalkingState", stopWalking)
+stopWalkingState2 = createState("stopWalkingState2", stopWalking)
 
 
 # FSM for kicking the ball
 
 kickBallFSM = createFSM("kickBallFSM")
-addStates(kickBallFSM, kickRightState, kickLeftState, stopWalkingState)
+addStates(kickBallFSM, kickRightState, kickLeftState, stopWalkingState, stopWalkingState2)
 
 setInitialState(kickBallFSM, stopWalkingState)
 
@@ -29,6 +30,9 @@ setInitialState(kickBallFSM, stopWalkingState)
 
 addTransition(stopWalkingState, leftFoot, kickLeftState)
 addTransition(stopWalkingState, rightFoot, kickRightState)
+
+addTransition(kickLeftState, lambda wm: True, stopWalkingState2)
+addTransition(kickRightState, lambda wm: True, stopWalkingState2)
 
 # Prints out completed transitions
 

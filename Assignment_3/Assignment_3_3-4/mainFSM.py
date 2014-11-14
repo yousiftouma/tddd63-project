@@ -14,7 +14,7 @@ from goToBallFSM import (goToBallFSM)
 from findGoalFSM import (findGoalFSM)                        
 
 # Import functions we've written
-from functions import (detectTouch, seeBall, noSeeBall, closeToFeet, seeGoal)
+from functions import (detectTouch, seeBall, noSeeBall, closeToFeet, seeGoal, oneKick)
 
 # Create states
 
@@ -40,9 +40,10 @@ lookDownState = createState("lookDownState", lambda : turnHead(0,0.3149))
 
 # Transitions for the mainFSM
 
-#addTransition(waitSittingState, detectTouch, standState)
+addTransition(waitSittingState, detectTouch, standState)
 addTransition(standState, lambda wm: True, lookBallFSM)
-addTransition(lookBallFSM, seeBall, goToBallFSM)
+addTransition(lookBallFSM, seeBall, resetgoToBallState)
+addTransition(resetgoToBallState, lambda wm: True, goToBallFSM)
 addTransition(goToBallFSM, noSeeBall, resetgoToBallState)
 addTransition(goToBallFSM, closeToFeet, stopWalkState3)
 addTransition(stopWalkState3, lambda wm: True, resetFindGoalState)
@@ -55,7 +56,8 @@ addTransition(bottomLedState, lambda wm: True, lookDownState)
 addTransition(lookDownState, seeBall, kickBallFSM)
 addTransition(lookDownState, noSeeBall, stopWalkState)
 
-addTransition(kickBallFSM, noSeeBall, lookBallFSM)
+addTransition(kickBallFSM, oneKick, resetKickBallState)
+addTransition(resetKickBallState, lambda wm: True, resetLookBallState)
 
 addTransition(resetgoToBallState, lambda wm: True, stopWalkState)
 addTransition(stopWalkState, lambda wm: True, resetLookBallState)
@@ -64,6 +66,7 @@ addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
 addTransition(goToBallFSM, detectTouch, stopWalkState2)
 addTransition(lookBallFSM, detectTouch, stopWalkState2)
 addTransition(findGoalFSM, detectTouch, stopWalkState2)
+addTransition(kickBallFSM, detectTouch, stopWalkState2)
 
 addTransition(stopWalkState2, lambda wm: True, sitState)
 addTransition(sitState, lambda wm: True, restState)
@@ -77,7 +80,7 @@ addStates(mainFSM, waitSittingState, standState, sitState, goToBallFSM, findGoal
           resetKickBallState, resetLookBallState, setBottomCameraState, bottomLedState,
           lookDownState, resetFindGoalState)
           
-setInitialState(mainFSM,standState)
+setInitialState(mainFSM, waitSittingState)
 
 # Prints all the completed transitions
 
