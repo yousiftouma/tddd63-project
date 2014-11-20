@@ -5,11 +5,12 @@ from fsm.functions import (
 	setInitialState, readWM, setPrintTransition )	
 
 # Import primitive robot behaviors
-from api.pubapi import sit, stand, rest, say, shutdown, communicate, stopWalking
+from api.pubapi import (sit, stand, rest, say, shutdown, communicate, stopWalking,
+                        resetSubFSM, setCamera, setLED)
 
 # Import functions we've written
 from functions import (detectTouch, touchDelay, waitForSit, seeBall, noSeeBall, closeToFeet,
-                       seeNao, oneKick)
+                       seeNao, oneKick, cameraDelay)
 
 # Import FSM
 
@@ -37,12 +38,17 @@ waitSittingState = createState("waitSittingState", lambda : None)
 
 resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(lookBallFSM))
 resetgoToBallState = createState("resetgoToBallState", lambda : resetSubFSM(goToBallFSM))
+resetFindNaoState = createState("resetFindNaoState", lambda : resetSubFSM(findNaoFSM))
 
+setBottomCamState = createState("setBottomCamState", lambda : setCamera("bottom"))
+setBottomLedState = createState("setBottomLedState", lambda : setLED("eyes", 1.0, 0.0, 0.0)) # Red
 
+setTopCamState = createState("setTopCamState", lambda : setCamera("top"))
+setTopLedState = createState("setTopLedState", lambda : setLED("eyes", 0.0, 1.0, 0.0)) # Green
 
 # Create communcationsstates
 
-robot = "goliath"
+robot = "piff"
 
 sendStandStatus = createState("sendStandStatus" , 
                                lambda: communicate(robot, "Stand"))
@@ -69,13 +75,21 @@ addTransition(goToBallFSM, closeToFeet, stopWalkingState)
 addTransition(goToBallFSM, noSeeBall, resetLookBallState)
 addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
 
-addTransition(stopWalkingState, lambda wm: True, findNaoFSM)
+addTransition(stopWalkingState, lambda wm: True, setTopCamState)
+addTransition(setTopCamState, lambda wm: True, setTopLedState)
+addTransition(setTopLedState, cameraDelay, findNaoFSM)
+
 addTransition(findNaoFSM, seeNao, stopWalkingState2)
-addTransition(stopWalkingState2, lambda wm: True, kickBallFSM)
+addTransition(stopWalkingState2, lambda wm: True, resetFindNaoState)
+addTransition(resetFindNaoState, lambda wm: True, setBottomCamState)
+addTransition(setBottomCamState, lambda wm: True, setBottomLedState)
+addTransition(setBottomLedState, lambda wm: True, kickBallFSM)
+#addTransition(kickBallFSM, noSeeBall, resetLookBallState)
 addTransition(kickBallFSM, oneKick, sendFindBallStatus)
 
+
 addTransition(sendFindBallStatus, lambda wm: True, stopWalkingState3)
-addTransition(stopWalkingState, waitForSit, sitState)
+addTransition(stopWalkingState3, waitForSit, sitState)
 
 addTransition(sitState, lambda wm: True, restState)
 addTransition(restState, lambda wm: True, shutdownState)
@@ -83,10 +97,11 @@ addTransition(restState, lambda wm: True, shutdownState)
 
 # Create the FSM and add the states created above
 mainFSM = createFSM("mainFSM")
-addStates(mainFSM , waitSittingState,
-          sendStandStatus, sendFindBallStatus, resetLookBallState, resetgoToBallState,
+addStates(mainFSM , waitSittingState, setBottomCamState, setBottomLedState,
+          sendStandStatus, sendFindBallStatus, resetLookBallState, resetgoToBallState, resetFindNaoState,
           sitState, standState, lookBallFSM, goToBallFSM, findNaoFSM, kickBallFSM,
-          restState, shutdownState, stopWalkingState, stopWalkingState2, stopWalkingState3)
+          restState, shutdownState, stopWalkingState, stopWalkingState2, stopWalkingState3, setTopCamState,
+          setTopLedState)
 
 # Set the initial state to waitSittingState
 setInitialState(mainFSM , waitSittingState)

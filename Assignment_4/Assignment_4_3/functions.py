@@ -179,10 +179,14 @@ def headTurning(wm):
         return turnHead(-1.2 + (t-1.2*3), 0.3149)
 
 def leftFoot(wm):
-    return(largestBall(wm)["px"] < (largestBall(wm)["px_size"]/2))
+    if largestBall(wm):
+        return(largestBall(wm)["px"] < (largestBall(wm)["px_size"]/2))
+    return False
 
 def rightFoot(wm):
-     return(largestBall(wm)["px"] >= (largestBall(wm)["px_size"]/2))
+    if largestBall(wm):
+        return(largestBall(wm)["px"] >= (largestBall(wm)["px_size"]/2))
+    return False
 
 def largestGoal(wm):
     camera_data_goals = readWM(wm,"goals")
@@ -253,16 +257,18 @@ def oneStep(wm):
     return (currentTime(wm) - entryTime(wm) >= 0.5)
 
 def oneKick(wm):
-    return (currentTime(wm) - entryTime(wm) >= 0.50)
+    return (currentTime(wm) - entryTime(wm) >= 7)
 
 def betweenFeet(wm):
-    return (abs(largestBall(wm)["px"] - (largestBall(wm)["px_size"]/2)) <= 50)
+    if largestBall(wm):
+        return (abs(largestBall(wm)["px"] - (largestBall(wm)["px_size"]/2)) <= 50)
 
 def touchDelay(wm):
     return ((currentTime(wm) - entryTime(wm)) > 3) and readWM(wm, "tactile", "middle")
 
 def waitForStand(wm):
-    print(readWM(wm, "comms"))
+    #if (readWM(wm, "comms")):
+       # print(readWM(wm, "comms"))
     messages = readWM(wm, "comms")
     for key in  messages:
         if messages[key]["msg"] == "Stand":
@@ -270,7 +276,8 @@ def waitForStand(wm):
     return False
 
 def waitForSit(wm):
-    print(readWM(wm, "comms"))
+    #if (readWM(wm, "comms")):
+       # print(readWM(wm, "comms"))
     messages = readWM(wm, "comms")
     for key in messages:
         if  messages[key]["msg"] == "Sit":
@@ -278,10 +285,20 @@ def waitForSit(wm):
     return False
 
 def waitForKick(wm):
-    print(readWM(wm, "comms"))
+   # if (readWM(wm, "comms")):
+       # print(readWM(wm, "comms"))
     messages = readWM(wm, "comms")
     for key in messages:
         if  messages[key]["msg"] == "Kick":
+            return True
+    return False
+
+def waitForFindBall(wm):
+    #if (readWM(wm, "comms")):
+       # print(readWM(wm, "comms"))
+    messages = readWM(wm, "comms")
+    for key in messages:
+        if messages[key]["msg"] == "Find ball":
             return True
     return False
 
@@ -295,7 +312,11 @@ def seeNao(wm):
 
         # The object with the largest area is most likely the true goal
         for b1 in cur_frame:
-            if  b1["pa"] <= 2500 and b1["pa"] >= 300:
-                return True
+           # print(b1)
+           # print("difference" ,currentTime(wm) - b1["t"])
+            if (currentTime(wm) - b1["t"]) <= 3:
+                print ("naoSize", b1["pa"])
+                if  b1["pa"] <= 2000 and b1["pa"] >= 200:
+                    return True
         return False
 
