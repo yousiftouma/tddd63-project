@@ -2,7 +2,7 @@
 from fsm.functions import (
 	createState , createFSM ,
 	addTransition , addStates ,
-	setInitialState, readWM )		# setMainFSM should be there
+	setInitialState, readWM )	
 
 # Import primitive robot behaviors
 from api.pubapi import sit, stand , rest, say , shutdown

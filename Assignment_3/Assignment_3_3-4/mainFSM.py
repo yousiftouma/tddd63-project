@@ -42,13 +42,17 @@ lookDownState = createState("lookDownState", lambda : turnHead(0,0.3149))
 
 addTransition(waitSittingState, detectTouch, standState)
 addTransition(standState, lambda wm: True, lookBallFSM)
+
 addTransition(lookBallFSM, seeBall, resetgoToBallState)
 addTransition(resetgoToBallState, lambda wm: True, goToBallFSM)
+
 addTransition(goToBallFSM, noSeeBall, resetgoToBallState)
 addTransition(goToBallFSM, closeToFeet, stopWalkState3)
+
 addTransition(stopWalkState3, lambda wm: True, resetFindGoalState)
 addTransition(resetFindGoalState, lambda wm: True, findGoalFSM)
 addTransition(findGoalFSM, seeGoal, stopWalkState4)
+
 addTransition(stopWalkState4, lambda wm: True, setBottomCameraState)
 addTransition(setBottomCameraState, lambda wm: True, bottomLedState)
 addTransition(bottomLedState, lambda wm: True, lookDownState)
