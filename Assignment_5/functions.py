@@ -172,7 +172,7 @@ def largestBall(wm):
             if (not largest_ball1) or (largest_ball1["pa"] < b1["pa"]):
                 largest_ball1 = b1
         if (currentTime(wm) - largest_ball1["t"]) <= 0.5:
-            if  largest_ball1["pa"] > 100:
+            if  largest_ball1["pa"] > 50:
                 return largest_ball1
         else:
             return False
@@ -183,27 +183,42 @@ def closeToFeet(wm):
     print (largestBall(wm)["x"], abs(largestBall(wm)["y"]))
     return (largestBall(wm)["x"] <= 110) and (abs(largestBall(wm)["y"]) <= 80)
 
-def closeToObstacle(wm):
-    if not largestBall(wm):
-        return False
-    dist = largestBall(wm)["x"]
-    minpos = largestBall(wm)["px_size"] * (3/10) 
-    maxpos = largestBall(wm)["px_size"] * (7/10)
-    pos = largestBall(wm)["px"]
-    print (dist, pos, largestBall(wm)["px_size"])
-    return (dist <= 200) and (pos <= maxpos) and (pos >= minpos)
-
-# Ovan ska bytas ut till att kolla pitch/yaw på bollen och se om huvudet är snett
+# Ovan ska bytas ut till att kolla pitch/yaw pa bollen och se om huvudet ar snett
 
 def rotateTime(wm):
-    if currentTime(wm) - entryTime(wm) >= 5:
+    if currentTime(wm) - entryTime(wm) >= 2:
         return True
     else:
         return False
 
-def rotateTime2(wm):
+
+def walkDelay(wm):
+    return currentTime(wm) - entryTime(wm) >= 1
+
+def closeToObstacle(wm):
     if not largestBall(wm):
-        return True
-   # else:
-     #   print largestBall(wm)["px"]
-      #  return (largestBall(wm)["px"] < 50)
+       # print("no ball")
+        return False
+    dist = largestBall(wm)["x"]
+    pos = largestBall(wm)["px"]
+    print ('mid', "dist=", dist, "px=", pos, "yaw=", abs(largestBall(wm)["yaw"]),
+           "pa=", largestBall(wm)['pa'])
+    return (dist <= 360) and abs(largestBall(wm)['yaw']) < 1.6
+
+def obstacleToLeft(wm):
+    if not largestBall(wm):
+       # print("no ball")
+        return False
+    dist = largestBall(wm)["x"]
+    pos = largestBall(wm)["px"]
+    print ('left',"dist=", dist, "px=", pos, "yaw=", largestBall(wm)["yaw"])
+    return (dist <= 390) and 0.3 < largestBall(wm)['yaw'] < 0.55
+
+def obstacleToRight(wm):
+    if not largestBall(wm):
+       # print("no ball")
+        return False
+    dist = largestBall(wm)["x"]
+    pos = largestBall(wm)["px"]
+    print ('right', "dist=", dist, "px=", pos, "yaw=", largestBall(wm)["yaw"])
+    return (dist <= 390) and -0.55 < largestBall(wm)['yaw'] < -0.3
