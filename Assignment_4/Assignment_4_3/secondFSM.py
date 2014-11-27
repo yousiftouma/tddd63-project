@@ -31,7 +31,7 @@ resetgoToBallState = createState("resetgoToBallState", lambda : resetSubFSM(goTo
 
 # States for communication
 
-robot = "puff"
+robot = "david"
 
 sendSitStatus = createState("sendSitStatus" , 
                                lambda: communicate(robot, "Sit"))

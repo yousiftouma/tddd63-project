@@ -314,7 +314,7 @@ def seeNao(wm):
         for b1 in cur_frame:
            # print(b1)
            # print("difference" ,currentTime(wm) - b1["t"])
-            if (currentTime(wm) - b1["t"]) <= 3:
+            if (currentTime(wm) - b1["t"]) <= 0.5:
                 print ("naoSize", b1["pa"])
                 if  b1["pa"] <= 2000 and b1["pa"] >= 200:
                     return True
