@@ -109,51 +109,10 @@ def detectTouch(wm):
     return readWM(wm, "tactile", "middle")
 
 
-def shakeHeadTime(wm):
-     t = currentTime(wm) - entryTime(wm)
-     if t >= 4*1.5:
-         return True
-     else:
-         return False
-
-
-
-def headTurning(wm):
-    t = currentTime(wm) - entryTime(wm) 
-    if t <= 1.2:
-        return turnHead(0 + t, 0.3149)
-    elif t >= 1.2 and t <= 1.2*3:
-        return turnHead(1.2 - (t-1.2), 0.3149)
-    elif t >= 1.2*3 and t <= 1.2*4:
-        return turnHead(-1.2 + (t-1.2*3), 0.3149)
-
-
-def largestGoal(wm):
-    camera_data_goals = readWM(wm,"goals")
-    if not camera_data_goals:
-        return None
-    else:
-        # Get the latest observation
-        cur_frame = camera_data_goals[0]
-
-        # The object with the largest area is most likely the true goal
-        largest_goal = None
-        for b1 in cur_frame:
-            if (not largest_goal) or (largest_goal["pa"] < b1["pa"]):
-                largest_goal = b1
-        if  largest_goal["pa"] > 2500:
-            return largest_goal
-        else:
-            return None
-
-
-
 def lookUp(wm):
     t = currentTime(wm) - entryTime(wm) 
     if t <= 0.6720*2:
         return turnHead(0, 0 - t/2)
-
-  
 
 def touchDelay(wm):
     return ((currentTime(wm) - entryTime(wm)) > 3) and readWM(wm, "tactile", "middle")
@@ -186,14 +145,13 @@ def closeToFeet(wm):
 # Ovan ska bytas ut till att kolla pitch/yaw pa bollen och se om huvudet ar snett
 
 def rotateTime(wm):
-    if currentTime(wm) - entryTime(wm) >= 2:
-        return True
-    else:
-        return False
-
+    return (currentTime(wm) - entryTime(wm)) >= 2
+        
+def headDelay(wm):
+    return (currentTime(wm) - entryTime(wm)) >= 0.5
 
 def walkDelay(wm):
-    return currentTime(wm) - entryTime(wm) >= 1
+    return (currentTime(wm) - entryTime(wm)) >= 1
 
 def closeToObstacle(wm):
     if not largestBall(wm):
@@ -203,7 +161,7 @@ def closeToObstacle(wm):
     pos = largestBall(wm)["px"]
     print ('mid', "dist=", dist, "px=", pos, "yaw=", abs(largestBall(wm)["yaw"]),
            "pa=", largestBall(wm)['pa'])
-    return (dist <= 360) and abs(largestBall(wm)['yaw']) < 1.6
+    return (dist <= 400) and abs(largestBall(wm)['yaw']) < 1.6
 
 def obstacleToLeft(wm):
     if not largestBall(wm):
@@ -222,3 +180,5 @@ def obstacleToRight(wm):
     pos = largestBall(wm)["px"]
     print ('right', "dist=", dist, "px=", pos, "yaw=", largestBall(wm)["yaw"])
     return (dist <= 390) and -0.55 < largestBall(wm)['yaw'] < -0.3
+
+
