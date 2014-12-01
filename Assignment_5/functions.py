@@ -126,15 +126,13 @@ def largestBall(wm):
         cur_frame = camera_data_balls[0]
 
         # The object with the largest area is most likely the true ball
-        largest_ball1 = None
+        largest_ball1 = []
         for b1 in cur_frame:
-            if (not largest_ball1) or (largest_ball1["pa"] < b1["pa"]):
-                largest_ball1 = b1
-        if (currentTime(wm) - largest_ball1["t"]) <= 0.5:
-            if  largest_ball1["pa"] > 50:
-                return largest_ball1
-        else:
-            return False
+            if (currentTime(wm) - b1["t"]) <= 0.5:
+                if  b1["pa"] > 100:
+                    largest_ball1 += [b1]
+        return largest_ball1
+        
 
 def closeToFeet(wm):
     if not largestBall(wm):
@@ -157,12 +155,12 @@ def closeToObstacle(wm):
     if not largestBall(wm):
        # print("no ball")
         return False
-    dist = largestBall(wm)["x"]
-    pos = largestBall(wm)["px"]
-    print ('mid', "dist=", dist, "px=", pos, "yaw=", abs(largestBall(wm)["yaw"]),
-           "pa=", largestBall(wm)['pa'])
-    return (dist <= 400) and abs(largestBall(wm)['yaw']) < 1.6
-
+    for ball in largestBall(wm):
+        print("dist=", ball["x"], "yaw=", ball["yaw"], "size=", ball["pa"])
+        if (ball["x"] <= 300) and abs(ball['yaw']) < 1.6:
+            return True
+    return False
+        
 def obstacleToLeft(wm):
     if not largestBall(wm):
        # print("no ball")
@@ -181,4 +179,13 @@ def obstacleToRight(wm):
     print ('right', "dist=", dist, "px=", pos, "yaw=", largestBall(wm)["yaw"])
     return (dist <= 390) and -0.55 < largestBall(wm)['yaw'] < -0.3
 
-
+def closeToObstacle2(wm):
+    if not largestBall(wm):
+       # print("no ball")
+        return False
+    dist = largestBall(wm)["x"]
+    pos = largestBall(wm)["px"]
+    size = largestBall(wm)["pa"]
+    yaw = largestBall(wm)["yaw"]
+    print ('mid', "dist=", dist, "px=", pos, "yaw=", yaw, "pa=", size)
+    return size >= 1500 and abs(yaw) < 1.6

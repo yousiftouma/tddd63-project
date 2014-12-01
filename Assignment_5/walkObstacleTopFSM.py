@@ -9,7 +9,7 @@ from api.pubapi import (sit, stand, rest, say, shutdown, communicate, stopWalkin
                         resetSubFSM, setCamera, setLED, turnHead, setWalkVelocity)
 
 # Import functions we've written
-from functions import (closeToObstacle, closeToFeet, rotateTime, walkDelay,
+from functions import (closeToObstacle, closeToObstacle2, closeToFeet, rotateTime, walkDelay,
                        obstacleToLeft, obstacleToRight, headDelay)
                        
 # Import FSM
@@ -31,34 +31,34 @@ stopWalkState = createState("stopWalkState", stopWalking)
 stopWalkState2 = createState("stopWalkState2", stopWalking)
 leftHeadState = createState("leftHeadState", lambda: turnHead(0.5, 0.2549))
 rightHeadState = createState("rightHeadState", lambda: turnHead(-0.5, 0.2549))
-lookDownState = createState("lookDownState", lambda : turnHead(0, 0.0549)) #0.1149 ok
-lookDownState2 = createState("lookDownState2", lambda : turnHead(0, 0.0549))
-lookDownMoreState = createState("lookDownMoreState", lambda : turnHead(0, 0.2549))
+lookDownState = createState("lookDownState", lambda : turnHead(0, 0.2549)) #0.1149 ok
+lookDownState2 = createState("lookDownState2", lambda : turnHead(0, 0.2549))
+lookDownMoreState = createState("lookDownMoreState", lambda : turnHead(0, 0.4549))
 
 # Add transitions
 
-addTransition(setBottomCamState, lambda wm: True, setBottomLedState)
-addTransition(setBottomLedState, lambda wm: True, lookDownState2)
+addTransition(setTopCamState, lambda wm: True, setTopLedState)
+addTransition(setTopLedState, lambda wm: True, lookDownState2)
 
 addTransition(lookDownState2, lambda wm: True, walkState)
 
-addTransition(walkState, closeToObstacle, rotateState)
+addTransition(walkState, closeToObstacle2, rotateState)
 addTransition(walkState, headDelay, rightHeadState)
 
-addTransition(rightHeadState, closeToObstacle, rotateState)
+addTransition(rightHeadState, closeToObstacle2, rotateState)
 addTransition(rightHeadState, headDelay, lookDownState)
 
-addTransition(lookDownState, closeToObstacle, rotateState)
+addTransition(lookDownState, closeToObstacle2, rotateState)
 addTransition(lookDownState, headDelay, leftHeadState)
 
-addTransition(leftHeadState, closeToObstacle, rotateState)
+addTransition(leftHeadState, closeToObstacle2, rotateState)
 addTransition(leftHeadState, headDelay, lookDownState2)
 
 addTransition(rotateState, rotateTime, stopWalkState)
 
-addTransition(stopWalkState, closeToObstacle, rotateState)
+addTransition(stopWalkState, closeToObstacle2, rotateState)
 addTransition(stopWalkState, lambda wm: True, lookDownMoreState) 
-addTransition(lookDownMoreState, closeToObstacle, rotateState)
+addTransition(lookDownMoreState, closeToObstacle2, rotateState)
 addTransition(lookDownMoreState, headDelay, lookDownState2)
 
 
@@ -75,12 +75,12 @@ addTransition(lookDownMoreState, headDelay, lookDownState2)
 
 
 # Create the FSM and add the states created above
-walkObstacleFSM = createFSM("walkObstacleFSM")
-addStates(walkObstacleFSM, setBottomCamState, setBottomLedState, setTopCamState, setTopLedState,
+walkObstacleTopFSM = createFSM("walkObstacleTopFSM")
+addStates(walkObstacleTopFSM, setBottomCamState, setBottomLedState, setTopCamState, setTopLedState,
           walkState, walkState2, rotateState, rotateState2, lookDownState, lookDownState2, 
           stopWalkState, stopWalkState2, leftHeadState, rightHeadState, lookDownMoreState)
 
 # Set the initial state to waitSittingState
-setInitialState(walkObstacleFSM , setBottomCamState)
+setInitialState(walkObstacleTopFSM, setTopCamState)
 
-setPrintTransition(walkObstacleFSM, True)
+setPrintTransition(walkObstacleTopFSM, True)
