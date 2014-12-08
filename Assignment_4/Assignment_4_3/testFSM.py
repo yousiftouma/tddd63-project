@@ -1,8 +1,8 @@
 # Import the FSM functions
 from fsm.functions import (
-	createState , createFSM ,
-	addTransition , addStates ,
-	setInitialState, readWM, setPrintTransition )	
+	createState, createFSM,
+	addTransition, addStates,
+	setInitialState, readWM, setPrintTransition)	
 
 # Import primitive robot behaviors
 from api.pubapi import (sit, stand, rest, say, shutdown, communicate, stopWalking,
@@ -17,9 +17,9 @@ standState = createState("standState", stand)
 sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 shutdownState = createState("shutdownState",
-				lambda : shutdown("Final state reached"))
+				lambda: shutdown("Final state reached"))
 
-addTransition(waitSittingState , detectTouch, standState)
+addTransition(waitSittingState, detectTouch, standState)
 addTransition(standState, seeNao, sitState)
 addTransition(standState, touchDelay, sitState)
 addTransition(sitState, lambda wm: True, restState)

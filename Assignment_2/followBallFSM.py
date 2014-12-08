@@ -44,10 +44,8 @@ addTransition(watchBallState, zeroYaw, walkToBallState)
 addTransition(rotateRightState, zeroYaw, walkToBallState)
 addTransition(rotateRightState, lambda wm: True, watchBallState)
 
-
 addTransition(rotateLeftState, zeroYaw, walkToBallState)
 addTransition(rotateLeftState, lambda wm: True, watchBallState)
-
 
 addTransition(walkToBallState, closeToFeet, stopWalkingState)
 addTransition(walkToBallState, switchCamera, setBottomCamState)
@@ -56,10 +54,7 @@ addTransition(walkToBallState, lambda wm: True, watchBallState)
 addTransition(setBottomCamState, cameraDelay, setBottomLedState)
 addTransition(setBottomLedState, lambda wm: True, walkToBallState)
 
-#addTransition(stopWalkingState, lambda wm: True, watchBallState2)
-
-
 
 # Prints out completed transitions
 
-#setPrintTransition(followBallFSM, True)
+setPrintTransition(followBallFSM, True)

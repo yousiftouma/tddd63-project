@@ -15,27 +15,27 @@ from goToBallFSM import (goToBallFSM)
 
 # Import functions we've written
 from functions import (detectTouch, seeBall, noSeeBall, closeToFeet, seeGoal, oneKick,
-                           waitForSit, waitForStand, waitForKick)
+                       waitForSit, waitForStand, waitForKick)
 
 # Create states
 
-waitSittingState = createState("waitSittingState", lambda : None)
+waitSittingState = createState("waitSittingState", lambda: None)
 sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 standState = createState("standState", stand)
 shutdownState = createState("shutdownState",
-				lambda : shutdown("Final state reached"))
+				lambda: shutdown("Final state reached"))
 stopWalkState = createState("stopWalkState", stopWalking)
 stopWalkState2 = createState("stopWalkState2", stopWalking)
 stopWalkState3 = createState("stopWalkState3", stopWalking)
 stopWalkState4 = createState("stopWalkState4", stopWalking)
-resetKickBallState = createState("resetKickBallState", lambda : resetSubFSM(kickBallFSM))
-resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(lookBallFSM))
-resetgoToBallState = createState("resetgoToBallState", lambda : resetSubFSM(goToBallFSM))
-resetFindGoalState = createState("resetFindGoalState", lambda : resetSubFSM(findGoalFSM))
-setBottomCameraState = createState("setBottomCameraState", lambda : setCamera("bottom"))
-bottomLedState = createState("bottomLedState", lambda : setLED("eyes", 1, 0, 0)) # Red
-lookDownState = createState("lookDownState", lambda : turnHead(0,0.3149))
+resetKickBallState = createState("resetKickBallState", lambda: resetSubFSM(kickBallFSM))
+resetLookBallState = createState("resetLookBallState", lambda: resetSubFSM(lookBallFSM))
+resetgoToBallState = createState("resetgoToBallState", lambda: resetSubFSM(goToBallFSM))
+resetFindGoalState = createState("resetFindGoalState", lambda: resetSubFSM(findGoalFSM))
+setBottomCameraState = createState("setBottomCameraState", lambda: setCamera("bottom"))
+bottomLedState = createState("bottomLedState", lambda: setLED("eyes", 1, 0, 0)) # Red
+lookDownState = createState("lookDownState", lambda: turnHead(0,0.3149))
 
 # The main FSM
 

@@ -68,7 +68,6 @@ def positiveYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] > 0.1:
-        #print ("positivt", averageLook(wm)[0])
         return True
     else:
         return False
@@ -77,7 +76,6 @@ def negativeYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] < -0.1:
-        #print ("negativ", averageLook(wm)[0])
         return True
     else:
         return False
@@ -102,7 +100,6 @@ def zeroYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] <= 0.1 and largestBall(wm)["yaw"] >= -0.1:
-       # print ("noll", averageLook(wm)[0])
         return True
     else:
         return False

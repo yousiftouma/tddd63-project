@@ -17,14 +17,14 @@ from functions import (seeBall, noSeeBall, shakeHeadTime, largestBall,
 
 shakeHeadState = createState("shakeHeadState", lambda wm: headTurning(wm))
 shakeHeadState2 = createState("shakeHeadState2", lambda wm: headTurning(wm))
-setTopCameraState = createState("setTopCameraState", lambda : setCamera("top"))
-setBottomCameraState = createState("setBottomCameraState", lambda : setCamera("bottom"))
-setTopCameraState2 = createState("setTopCameraState2", lambda : setCamera("top"))
-lookAtBallState = createState("lookAtBallState", lambda wm : lookAtBall2(wm))
-rotateState = createState("rotateState", lambda : setWalkVelocity(0, 0, 0.5))
-bottomLedState = createState("bottomLedState", lambda : setLED("eyes", 1, 0, 0)) # Red
-topLedState = createState("topLedState", lambda : setLED("eyes", 0, 1, 0)) # Green
-topLedState2 = createState("topLedState2", lambda : setLED("eyes", 0, 1, 0)) # Green
+setTopCameraState = createState("setTopCameraState", lambda: setCamera("top"))
+setBottomCameraState = createState("setBottomCameraState", lambda: setCamera("bottom"))
+setTopCameraState2 = createState("setTopCameraState2", lambda: setCamera("top"))
+lookAtBallState = createState("lookAtBallState", lambda wm: lookAtBall2(wm))
+rotateState = createState("rotateState", lambda: setWalkVelocity(0, 0, 0.5))
+bottomLedState = createState("bottomLedState", lambda: setLED("eyes", 1, 0, 0)) # Red
+topLedState = createState("topLedState", lambda: setLED("eyes", 0, 1, 0)) # Green
+topLedState2 = createState("topLedState2", lambda: setLED("eyes", 0, 1, 0)) # Green
 stopWalkState = createState("stopWalkState", stopWalking)
 
 

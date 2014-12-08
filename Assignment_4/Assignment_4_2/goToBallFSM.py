@@ -11,23 +11,23 @@ from api.pubapi import (
 from functions import (averageLook, lookAtBall, largestBall, positiveYaw,
     negativeYaw, zeroYaw, switchCamera, entryTime, currentTime, cameraDelay,
     closeToFeet, leftFoot, rightFoot, farNegativeYaw, farPositiveYaw, lookAtBall2,
-                       seeGoal)
+    seeGoal)
 
 
 #create states    
 
-rotateLeftState = createState("rotateLeftState", lambda : setWalkVelocity(0,0, 0.15))
-rotateRightState = createState("rotateRightState", lambda : setWalkVelocity(0,0, -0.15))
-archLeftState = createState("archLeftState", lambda : setWalkVelocity(0.65, 0, 0.15))
-archRightState = createState("archRightState", lambda : setWalkVelocity(0.65, 0, -0.15))
-walkToBallState = createState("walkToBallState", lambda : setWalkVelocity(0.6, 0, 0))
-watchBallState = createState("watchBallState", lambda wm : lookAtBall2(wm))
+rotateLeftState = createState("rotateLeftState", lambda: setWalkVelocity(0,0, 0.15))
+rotateRightState = createState("rotateRightState", lambda: setWalkVelocity(0,0, -0.15))
+archLeftState = createState("archLeftState", lambda: setWalkVelocity(0.65, 0, 0.15))
+archRightState = createState("archRightState", lambda: setWalkVelocity(0.65, 0, -0.15))
+walkToBallState = createState("walkToBallState", lambda: setWalkVelocity(0.6, 0, 0))
+watchBallState = createState("watchBallState", lambda wm: lookAtBall2(wm))
 stopWalkingState = createState("stopWalkingState", stopWalking)
 stopWalkingState2 = createState("stopWalkingState2", stopWalking) 
-setBottomCamState = createState("setBottomCamState", lambda : setCamera("bottom"))
-setBottomLedState = createState("setBottomLedState", lambda : setLED("eyes", 1,0,0))
-kickRightState = createState("kickRightState", lambda : kick("right"))
-kickLeftState = createState("kickLeftState", lambda : kick("left"))
+setBottomCamState = createState("setBottomCamState", lambda: setCamera("bottom"))
+setBottomLedState = createState("setBottomLedState", lambda: setLED("eyes", 1,0,0))
+kickRightState = createState("kickRightState", lambda: kick("right"))
+kickLeftState = createState("kickLeftState", lambda: kick("left"))
 
 
 # FSM for following the ball
@@ -65,10 +65,6 @@ addTransition(walkToBallState, lambda wm: True, watchBallState)
 addTransition(setBottomCamState, cameraDelay, setBottomLedState)
 addTransition(setBottomLedState, lambda wm: True, watchBallState)
 
-#addTransition(stopWalkingState, lambda wm: True, watchBallState2)
-
-
-
 # Prints out completed transitions
 
-#setPrintTransition(goToBallFSM, True)
+setPrintTransition(goToBallFSM, True)

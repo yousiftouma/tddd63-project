@@ -8,20 +8,19 @@ from api.pubapi import (sit, stand, rest, say, shutdown,
     startWalking, turnHead, setCamera,
     say, setLED, setWalkVelocity, stopWalking)
 
-from followBallFSM import (followBallFSM, rotateLeftState, rotateRightState, 
-                           walkToBallState,
-                           watchBallState, stopWalkingState, 
-                           stopWalkingState2, followBallFSM)
+from followBallFSM import (followBallFSM, rotateLeftState, 
+    rotateRightState, walkToBallState, watchBallState, 
+    stopWalkingState, stopWalkingState2, followBallFSM)
 
 def detectTouch(wm):
     return readWM(wm, "tactile", "middle")
 
-waitSittingState = createState("waitSittingState", lambda : None)
+waitSittingState = createState("waitSittingState", lambda: None)
 sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 standState = createState("standState", stand)
 shutdownState = createState("shutdownState",
-				lambda : shutdown("Final state reached"))
+				lambda: shutdown("Final state reached"))
 
 mainFSM = createFSM("mainFSM")
 addStates(mainFSM, waitSittingState, sitState, restState, standState,

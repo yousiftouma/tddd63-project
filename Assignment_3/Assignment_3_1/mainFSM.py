@@ -19,7 +19,7 @@ from functions import (detectTouch, seeBall, noSeeBall)
 
 # Create states
 
-waitSittingState = createState("waitSittingState", lambda : None)
+waitSittingState = createState("waitSittingState", lambda: None)
 sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 standState = createState("standState", stand)
@@ -27,8 +27,8 @@ shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
 stopWalkState = createState("stopWalkState", stopWalking)
 stopWalkState2 = createState("stopWalkState2", stopWalking)
-resetKickBallState = createState("resetKickBallState", lambda : resetSubFSM(kickBallFSM))
-resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(lookBallFSM))
+resetKickBallState = createState("resetKickBallState", lambda: resetSubFSM(kickBallFSM))
+resetLookBallState = createState("resetLookBallState", lambda: resetSubFSM(lookBallFSM))
 
 # The main FSM
 
@@ -36,16 +36,11 @@ resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(look
 
 addTransition(waitSittingState, detectTouch, standState)
 addTransition(standState, lambda wm: True, lookBallFSM)
-#addTransition(lookBallFSM, seeBall, resetLookBallState)
-#addTransition(resetKickBallState, lambda wm: True, kickBallFSM)
-#addTransition(resetLookBallState, lambda wm: True, kickBallFSM)
 addTransition(lookBallFSM, seeBall, kickBallFSM)
 addTransition(kickBallFSM, noSeeBall, resetKickBallState)
 
 addTransition(resetKickBallState, lambda wm: True, stopWalkState)
-#addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
 addTransition(stopWalkState, lambda wm: True, resetLookBallState)
-#addTransition(stopWalkState, lambda wm: True, lookBallFSM)
 addTransition(resetLookBallState, lambda wm: True, lookBallFSM)
 
 addTransition(kickBallFSM, detectTouch, stopWalkState2)

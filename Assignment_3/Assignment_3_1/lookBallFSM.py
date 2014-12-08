@@ -36,7 +36,7 @@ addStates(lookBallFSM, shakeHeadState, stopWalkState,
           setTopCameraState, setTopCameraState2, 
           setBottomCameraState, bottomLedState,
           topLedState, lookAtBallState, rotateState,
-          shakeHeadState2,topLedState2)
+          shakeHeadState2, topLedState2)
 
 setInitialState(lookBallFSM, shakeHeadState)
 
@@ -45,7 +45,6 @@ setInitialState(lookBallFSM, shakeHeadState)
 addTransition(shakeHeadState, seeBall, lookAtBallState)
 addTransition(shakeHeadState, shakeHeadTime, setBottomCameraState)
 addTransition(setBottomCameraState, cameraDelay, bottomLedState)
-
 
 addTransition(bottomLedState, lambda wm: True, shakeHeadState2)
 addTransition(shakeHeadState2, seeBall, lookAtBallState)

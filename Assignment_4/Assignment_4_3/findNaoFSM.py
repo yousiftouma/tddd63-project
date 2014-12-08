@@ -19,12 +19,12 @@ circleRightState = createState("circleRightState", lambda: setWalkVelocity(0, 1,
 lookUpState = createState("lookUpState", lambda wm: lookUp(wm))
 stopWalkingState = createState("stopWalkingState", stopWalking)
 stopRotateState = createState("stopRotateState", stopWalking)
-setTopCameraState = createState("setTopCameraState", lambda : setCamera("top"))
-topLedState = createState("topLedState", lambda : setLED("eyes", 0, 1, 0)) # Green
-lookStraightState = createState("lookStraightState", lambda : turnHead(0.25, 0))
+setTopCameraState = createState("setTopCameraState", lambda: setCamera("top"))
+topLedState = createState("topLedState", lambda: setLED("eyes", 0, 1, 0)) # Green
+lookStraightState = createState("lookStraightState", lambda: turnHead(0.25, 0))
 standState = createState("standState", stopWalking)
-leftStepState = createState("leftStepState", lambda : setWalkVelocity(0, 0.5 ,0))
-rightStepState = createState("rightStepState", lambda : setWalkVelocity(0, -0.5, 0))
+leftStepState = createState("leftStepState", lambda: setWalkVelocity(0, 0.5 ,0))
+rightStepState = createState("rightStepState", lambda: setWalkVelocity(0, -0.5, 0))
 
 # Transitions for the findGoalFSM
 

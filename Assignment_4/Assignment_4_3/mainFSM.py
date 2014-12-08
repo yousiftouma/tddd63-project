@@ -1,8 +1,8 @@
 # Import the FSM functions
 from fsm.functions import (
-	createState , createFSM ,
-	addTransition , addStates ,
-	setInitialState, readWM, setPrintTransition )	
+	createState, createFSM,
+	addTransition, addStates,
+	setInitialState, readWM, setPrintTransition)	
 
 # Import primitive robot behaviors
 from api.pubapi import (sit, stand, rest, say, shutdown, communicate, stopWalking,
@@ -27,25 +27,19 @@ sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
-
 stopWalkingState = createState("stopWalkingState", stopWalking)
 stopWalkingState2 = createState("stopWalkingState2", stopWalking)
 stopWalkingState3 = createState("stopWalkingState3", stopWalking)
 stopWalkingState4 = createState("stopWalkingState4", stopWalking)
-
-
-waitSittingState = createState("waitSittingState", lambda : None)
-
-resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(lookBallFSM))
-resetgoToBallState = createState("resetgoToBallState", lambda : resetSubFSM(goToBallFSM))
-resetFindNaoState = createState("resetFindNaoState", lambda : resetSubFSM(findNaoFSM))
-
-setBottomCamState = createState("setBottomCamState", lambda : setCamera("bottom"))
-setBottomLedState = createState("setBottomLedState", lambda : setLED("eyes", 1.0, 0.0, 0.0)) # Red
-setTopCamState = createState("setTopCamState", lambda : setCamera("top"))
-setTopLedState = createState("setTopLedState", lambda : setLED("eyes", 0.0, 1.0, 0.0)) # Green
-
-lookDownState = createState("lookDownState", lambda : turnHead(0,0.3149))
+waitSittingState = createState("waitSittingState", lambda: None)
+resetLookBallState = createState("resetLookBallState", lambda: resetSubFSM(lookBallFSM))
+resetgoToBallState = createState("resetgoToBallState", lambda: resetSubFSM(goToBallFSM))
+resetFindNaoState = createState("resetFindNaoState", lambda: resetSubFSM(findNaoFSM))
+setBottomCamState = createState("setBottomCamState", lambda: setCamera("bottom"))
+setBottomLedState = createState("setBottomLedState", lambda: setLED("eyes", 1.0, 0.0, 0.0)) # Red
+setTopCamState = createState("setTopCamState", lambda: setCamera("top"))
+setTopLedState = createState("setTopLedState", lambda: setLED("eyes", 0.0, 1.0, 0.0)) # Green
+lookDownState = createState("lookDownState", lambda: turnHead(0,0.3149))
 
 # Create communcationsstates
 
@@ -57,13 +51,8 @@ sendStandStatus = createState("sendStandStatus" ,
 sendFindBallStatus = createState("sendFindBallStatus", 
                             lambda: communicate(robot, "Find ball"))
 
-
-
-# States for talking
-
-
-
 # Add transitions
+
 addTransition(waitSittingState , detectTouch, sendStandStatus)
 
 addTransition(sendStandStatus , lambda wm: True, standState)
@@ -72,7 +61,7 @@ addTransition(standState, lambda wm: True, lookBallFSM)
 addTransition(lookBallFSM, seeBall, resetgoToBallState)
 addTransition(resetgoToBallState, lambda wm: True, goToBallFSM)
 
-addTransition(goToBallFSM, noSeeBall, resetLookBallState) # Maybe switch to stopwalkingstate3
+addTransition(goToBallFSM, noSeeBall, resetLookBallState) 
 addTransition(goToBallFSM, closeToFeet, stopWalkingState)
 
 addTransition(stopWalkingState, lambda wm: True, resetFindNaoState)
@@ -99,13 +88,13 @@ addTransition(restState, lambda wm: True, shutdownState)
 
 # Create the FSM and add the states created above
 mainFSM = createFSM("mainFSM")
-addStates(mainFSM , waitSittingState, setBottomCamState, setBottomLedState,
+addStates(mainFSM, waitSittingState, setBottomCamState, setBottomLedState,
           sendStandStatus, sendFindBallStatus, resetLookBallState, resetgoToBallState, resetFindNaoState,
           sitState, standState, lookBallFSM, goToBallFSM, findNaoFSM, kickBallFSM,
           restState, shutdownState, stopWalkingState, stopWalkingState2, stopWalkingState3, 
           stopWalkingState4, setTopCamState, setTopLedState, lookDownState)
 
 # Set the initial state to waitSittingState
-setInitialState(mainFSM , waitSittingState)
+setInitialState(mainFSM, waitSittingState)
 
 setPrintTransition(mainFSM, True)

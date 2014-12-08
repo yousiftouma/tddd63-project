@@ -51,7 +51,6 @@ def positiveYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] > 0.1:
-        #print ("positivt", averageLook(wm)[0])
         return True
     else:
         return False
@@ -60,7 +59,6 @@ def negativeYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] < -0.1:
-        #print ("negativ", averageLook(wm)[0])
         return True
     else:
         return False
@@ -85,7 +83,6 @@ def zeroYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] <= 0.1 and largestBall(wm)["yaw"] >= -0.1:
-       # print ("noll", averageLook(wm)[0])
         return True
     else:
         return False
@@ -140,8 +137,6 @@ def closeToFeet(wm):
     print (largestBall(wm)["x"], abs(largestBall(wm)["y"]))
     return (largestBall(wm)["x"] <= 110) and (abs(largestBall(wm)["y"]) <= 80)
 
-# Ovan ska bytas ut till att kolla pitch/yaw pa bollen och se om huvudet ar snett
-
 def rotateTime(wm):
     return (currentTime(wm) - entryTime(wm)) >= 2
         
@@ -153,7 +148,6 @@ def walkDelay(wm):
 
 def closeToObstacle(wm):
     if not largestBall(wm):
-       # print("no ball")
         return False
     for ball in largestBall(wm):
         print("dist=", ball["x"], "yaw=", ball["yaw"], "size=", ball["pa"])
@@ -163,7 +157,6 @@ def closeToObstacle(wm):
         
 def obstacleToLeft(wm):
     if not largestBall(wm):
-       # print("no ball")
         return False
     dist = largestBall(wm)["x"]
     pos = largestBall(wm)["px"]
@@ -172,7 +165,6 @@ def obstacleToLeft(wm):
 
 def obstacleToRight(wm):
     if not largestBall(wm):
-       # print("no ball")
         return False
     dist = largestBall(wm)["x"]
     pos = largestBall(wm)["px"]
@@ -181,7 +173,6 @@ def obstacleToRight(wm):
 
 def closeToObstacle2(wm):
     if not largestBall(wm):
-       # print("no ball")
         return False
     dist = largestBall(wm)["x"]
     pos = largestBall(wm)["px"]

@@ -1,13 +1,13 @@
 # Import the FSM functions
 from fsm.functions import (
-	createState , createFSM ,
-	addTransition , addStates ,
-	setInitialState, readWM, writeWM, setPrintTransition )		# setMainFSM should be there
+	createState, createFSM,
+	addTransition, addStates,
+	setInitialState, readWM, writeWM, setPrintTransition)	
 
 # Import primitive robot behaviors
-from api.pubapi import sit, stand , rest, say , shutdown ,\
-    startWalking , turnHead , hMShake , hMHang, setCamera,\
-    say, setLED
+from api.pubapi import (sit, stand, rest, say, shutdown,
+    startWalking, turnHead, hMShake, hMHang, setCamera,
+    say, setLED)
 
 # Define the functions for world model
 
@@ -29,7 +29,7 @@ def noSeeBall(wm):
     if not largestBall(wm)["pa"] == None:
         print (largestBall(wm)["pa"])
         if largestBall(wm)["pa"] <= 70:
-            print( largestBall(wm)["pa"] , "no ball")
+            print(largestBall(wm)["pa"], "no ball")
             return True
     else:
         return False
@@ -89,47 +89,40 @@ def time(wm):
 
 # create states
 
-waitSittingState = createState("waitSittingState", lambda : None)
+waitSittingState = createState("waitSittingState", lambda: None)
 waitStandingState = createState("waitStandingState", lambda: None)
-waitStanding2State = createState("waitStanding2State", lambda: None)
 sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 standState = createState("standState", stand)
-shakeHeadState = createState("shakeHeadState", hMShake)
-shakeHead2State = createState("shakeHead2State", hMShake)
 hangHeadState = createState("hangHeadState", hMHang)
 shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
-setTopCameraState = createState("setTopCameraState", lambda : setCamera("top"))
-setBottomCameraState = createState("setBottomCameraState", lambda : setCamera("bottom"))
-sayBallState = createState("sayBallState", lambda : say("ball!"))
-sayNoBallState = createState("sayNoBallState", lambda : say("no fucking ball found!"))
-lookAtBallState = createState("lookAtBallState", lambda wm : lookAtBall(wm) )
+sayBallState = createState("sayBallState", lambda: say("ball!"))
+sayNoBallState = createState("sayNoBallState", lambda: say("no ball found!"))
+lookAtBallState = createState("lookAtBallState", lambda wm: lookAtBall(wm))
 
 
 # Add transitions
 
-addTransition(waitSittingState , detectTouch , standState)
-addTransition(standState, lambda wm: True, hangHeadState )
+addTransition(waitSittingState, detectTouch, standState)
+addTransition(standState, lambda wm: True, hangHeadState)
 addTransition(hangHeadState, lambda wm: True, waitStandingState)
-addTransition(waitStandingState, seeBall  , sayBallState )
-addTransition(waitStandingState, time , sayNoBallState)
-addTransition(sayBallState, lambda wm: True, lookAtBallState )
-addTransition(lookAtBallState, noSeeBall , sayNoBallState )
+addTransition(waitStandingState, seeBall, sayBallState)
+addTransition(waitStandingState, time, sayNoBallState)
+addTransition(sayBallState, lambda wm: True, lookAtBallState)
+addTransition(lookAtBallState, noSeeBall, sayNoBallState)
 addTransition(sayNoBallState, lambda wm: True, sitState)
-addTransition(sitState , lambda wm: True , restState)
-addTransition(restState , lambda wm: True , shutdownState)
+addTransition(sitState, lambda wm: True, restState)
+addTransition(restState, lambda wm: True, shutdownState)
 
 # Create the FSM and add the states created above
 myFSM = createFSM("fsm")
-addStates(myFSM , waitSittingState , standState , 
-           sitState , restState , shutdownState ,
-          shakeHeadState , shakeHead2State , 
-          hangHeadState, waitStandingState, setTopCameraState, 
-          setBottomCameraState, sayBallState,
-          sayNoBallState, lookAtBallState )
+addStates(myFSM, waitSittingState, standState, 
+          sitState, restState, shutdownState,
+          hangHeadState, waitStandingState, sayBallState,
+          sayNoBallState, lookAtBallState)
 
 setPrintTransition(myFSM, True)
 
 # Set the initial state to waitSittingState
-setInitialState(myFSM , waitSittingState)
+setInitialState(myFSM, waitSittingState)

@@ -12,7 +12,7 @@ from api.pubapi import (
 from functions import (averageLook, lookAtBall, largestBall, positiveYaw,
     negativeYaw, zeroYaw, switchCamera, entryTime, currentTime, cameraDelay,
     closeToFeet, leftFoot, rightFoot, farNegativeYaw, farPositiveYaw, lookAtBall2,
-                       seeGoal)
+    seeGoal)
 
 
 #create states    
@@ -66,10 +66,6 @@ addTransition(walkToBallState, lambda wm: True, watchBallState)
 addTransition(setBottomCamState, cameraDelay, setBottomLedState)
 addTransition(setBottomLedState, lambda wm: True, watchBallState)
 
-#addTransition(stopWalkingState, lambda wm: True, watchBallState2)
-
-
-
 # Prints out completed transitions
 
-#setPrintTransition(goToBallFSM, True)
+setPrintTransition(goToBallFSM, True)

@@ -2,7 +2,7 @@
 from fsm.functions import (readWM)
 
 # Import primitive robot behaviors
-from api.pubapi import sit, stand, rest, say, shutdown, communicate
+from api.pubapi import (sit, stand, rest, say, shutdown, communicate)
 
 def detectTouch(wm):
     return readWM(wm, "tactile", "middle")

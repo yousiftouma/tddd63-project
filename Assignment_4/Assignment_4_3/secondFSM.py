@@ -26,8 +26,8 @@ shutdownState = createState("shutdownState",
 				lambda : shutdown("Final state reached"))
 stopWalkState = createState("stopWalkState", stopWalking)
 stopWalkState2 = createState("stopWalkState", stopWalking)
-resetLookBallState = createState("resetLookBallState", lambda : resetSubFSM(lookBallFSM))
-resetgoToBallState = createState("resetgoToBallState", lambda : resetSubFSM(goToBallFSM))
+resetLookBallState = createState("resetLookBallState", lambda: resetSubFSM(lookBallFSM))
+resetgoToBallState = createState("resetgoToBallState", lambda: resetSubFSM(goToBallFSM))
 
 # States for communication
 

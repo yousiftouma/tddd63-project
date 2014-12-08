@@ -17,13 +17,13 @@ from walkObstacleTopFSM import (walkObstacleTopFSM)
 
 # Create states
 
-waitSittingState = createState("waitSittingState", lambda : None)
+waitSittingState = createState("waitSittingState", lambda: None)
 standState = createState("standState", stand)
 sitState = createState("sitState", sit)
 restState = createState("restState", rest)
 stopWalkState = createState("stopWalkState", stopWalking)
 shutdownState = createState("shutdownState",
-				lambda : shutdown("Final state reached"))
+				lambda: shutdown("Final state reached"))
 
 
 

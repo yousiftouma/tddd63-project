@@ -36,4 +36,4 @@ addTransition(kickRightState, lambda wm: True, stopWalkingState2)
 
 # Prints out completed transitions
 
-#setPrintTransition(kickBallFSM, True)
+setPrintTransition(kickBallFSM, True)

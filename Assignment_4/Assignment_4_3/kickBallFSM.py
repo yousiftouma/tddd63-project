@@ -12,8 +12,8 @@ from functions import (leftFoot, rightFoot)
  
 #create states    
 
-kickRightState = createState("kickRightState", lambda : kick("right"))
-kickLeftState = createState("kickLeftState", lambda : kick("left"))
+kickRightState = createState("kickRightState", lambda: kick("right"))
+kickLeftState = createState("kickLeftState", lambda: kick("left"))
 stopWalkingState = createState("stopWalkingState", stopWalking)
 stopWalkingState2 = createState("stopWalkingState2", stopWalking)
 

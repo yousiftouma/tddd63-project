@@ -1,11 +1,11 @@
 # Import the FSM functions
 from fsm.functions import (
-	createState , createFSM ,
-	addTransition , addStates ,
-	setInitialState, readWM, setPrintTransition )	
+	createState, createFSM,
+	addTransition, addStates,
+	setInitialState, readWM, setPrintTransition)	
 
 # Import primitive robot behaviors
-from api.pubapi import sit, stand, rest, say, shutdown, communicate
+from api.pubapi import (sit, stand, rest, say, shutdown, communicate)
 
 # Import functions we've written
 from functions import (detectTouch, touchDelay)
@@ -21,10 +21,10 @@ shutdownState = createState("shutdownState",
  
 # Create states for waiting for touch
 
-waitSittingState4 = createState("waitSittingState3", lambda : None)
-waitSittingState3 = createState("waitSittingState3", lambda : None)
-waitSittingState2 = createState("waitSittingState2", lambda : None)
-waitSittingState = createState("waitSittingState", lambda : None)
+waitSittingState4 = createState("waitSittingState3", lambda: None)
+waitSittingState3 = createState("waitSittingState3", lambda: None)
+waitSittingState2 = createState("waitSittingState2", lambda: None)
+waitSittingState = createState("waitSittingState", lambda: None)
 
 # Create communcationsstates
 
@@ -44,14 +44,10 @@ sendKickStatus = createState("sendKickStatus",
 
 sayShutdownState = createState("sayShutdownState", lambda: say("Shutting Down"))
 
-#messages = readWM(wm , "comms", "msg")
-#sortedMessages = sorted(messages)
-
-
 # Add transitions according to the state diagram
-addTransition(waitSittingState , detectTouch, sendStandStatus)
+addTransition(waitSittingState, detectTouch, sendStandStatus)
 
-addTransition(sendStandStatus , lambda wm: True, waitSittingState2)
+addTransition(sendStandStatus, lambda wm: True, waitSittingState2)
 addTransition(waitSittingState2, touchDelay, sendKickStatus)
 
 addTransition(sendKickStatus, lambda wm: True, waitSittingState3)
@@ -66,12 +62,11 @@ addTransition(restState, lambda wm: True, shutdownState)
 
 # Create the FSM and add the states created above
 mainFSM = createFSM("mainFSM")
-addStates(mainFSM , waitSittingState, waitSittingState2, waitSittingState3,
-          waitSittingState4,
-          sendStandStatus, sendSitStatus, sendKickStatus,
+addStates(mainFSM, waitSittingState, waitSittingState2, waitSittingState3,
+          waitSittingState4, sendStandStatus, sendSitStatus, sendKickStatus,
           restState, shutdownState, sayShutdownState)
 
 # Set the initial state to waitSittingState
-setInitialState(mainFSM , waitSittingState)
+setInitialState(mainFSM, waitSittingState)
 
 setPrintTransition(mainFSM, True)

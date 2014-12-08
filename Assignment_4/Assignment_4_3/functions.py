@@ -68,7 +68,6 @@ def positiveYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] > 0.1:
-        #print ("positivt", averageLook(wm)[0])
         return True
     else:
         return False
@@ -77,7 +76,6 @@ def negativeYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] < -0.1:
-        #print ("negativ", averageLook(wm)[0])
         return True
     else:
         return False
@@ -102,7 +100,6 @@ def zeroYaw(wm):
     if largestBall(wm) == None or largestBall(wm) == False:
         return False
     if largestBall(wm)["yaw"] <= 0.1 and largestBall(wm)["yaw"] >= -0.1:
-       # print ("noll", averageLook(wm)[0])
         return True
     else:
         return False
@@ -267,8 +264,6 @@ def touchDelay(wm):
     return ((currentTime(wm) - entryTime(wm)) > 3) and readWM(wm, "tactile", "middle")
 
 def waitForStand(wm):
-    #if (readWM(wm, "comms")):
-       # print(readWM(wm, "comms"))
     messages = readWM(wm, "comms")
     for key in  messages:
         if messages[key]["msg"] == "Stand":
@@ -276,8 +271,6 @@ def waitForStand(wm):
     return False
 
 def waitForSit(wm):
-    #if (readWM(wm, "comms")):
-       # print(readWM(wm, "comms"))
     messages = readWM(wm, "comms")
     for key in messages:
         if  messages[key]["msg"] == "Sit":
@@ -285,8 +278,6 @@ def waitForSit(wm):
     return False
 
 def waitForKick(wm):
-   # if (readWM(wm, "comms")):
-       # print(readWM(wm, "comms"))
     messages = readWM(wm, "comms")
     for key in messages:
         if  messages[key]["msg"] == "Kick":
@@ -294,8 +285,6 @@ def waitForKick(wm):
     return False
 
 def waitForFindBall(wm):
-    #if (readWM(wm, "comms")):
-       # print(readWM(wm, "comms"))
     messages = readWM(wm, "comms")
     for key in messages:
         if messages[key]["msg"] == "Find ball":
@@ -312,8 +301,6 @@ def seeNao(wm):
 
         # The object with the largest area is most likely the true goal
         for b1 in cur_frame:
-           # print(b1)
-           # print("difference" ,currentTime(wm) - b1["t"])
             if (currentTime(wm) - b1["t"]) <= 0.5:
                 print ("naoSize", b1["pa"])
                 if  b1["pa"] <= 2000 and b1["pa"] >= 200:
