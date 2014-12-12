@@ -12,7 +12,7 @@ from functions import (detectTouch)
 
 # Import FSM
 from walkObstacleFSM import (walkObstacleFSM)
-from walkObstacleTopFSM import (walkObstacleTopFSM)
+
 
 
 # Create states
@@ -38,7 +38,7 @@ addTransition(restState, lambda wm: True, shutdownState)
 
 # Create the FSM and add the states created above
 mainFSM = createFSM("mainFSM")
-addStates(mainFSM, walkObstacleFSM, walkObstacleTopFSM, waitSittingState, standState, 
+addStates(mainFSM, walkObstacleFSM, waitSittingState, standState, 
           stopWalkState, sitState, restState, shutdownState)
 
 # Set the initial state to waitSittingState
